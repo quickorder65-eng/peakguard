@@ -1,13 +1,6 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PeakGuard</title>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>PeakGuard</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Noto+Sans:wght@400;600;700&family=PT+Mono:wght@400;700&display=swap">
-</head>
-<body>
-<style>
+</head><body><style>
   :root{
     color-scheme: light;
     --paper: #f6f4ee;
@@ -305,8 +298,11 @@
     background:var(--paper-deep);
     border-bottom:1px solid var(--line);
   }
-  .contour-bg{ position:absolute; inset:0; width:100%; height:100%; opacity:0.55; }
   .hero-inner{ position:relative; z-index:1; }
+
+  .hero-layout{ display:grid; grid-template-columns:1.15fr 0.85fr; gap:48px; align-items:center; }
+  @media (max-width:860px){ .hero-layout{ grid-template-columns:1fr; gap:30px; } }
+  .hero-visual{ width:100%; }
 
   .coords{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.03em; color:var(--sage); }
   .eyebrow{
@@ -317,8 +313,6 @@
   .hero h1{ font-size:clamp(38px,8vw,62px); line-height:1.02; margin-top:14px; }
   .hero-tagline{ font-family:var(--font-display); font-weight:600; font-size:clamp(19px,3vw,24px); color:var(--brand-deep); margin-top:14px; max-width:16ch; line-height:1.28; }
   .hero-sub{ margin-top:16px; font-size:16.5px; color:var(--ink-soft); max-width:50ch; }
-  .hero-grid{ margin-top:36px; display:grid; grid-template-columns:1fr 1fr; gap:30px; align-items:center; }
-  @media (max-width:760px){ .hero-grid{ grid-template-columns:1fr; } }
 
   .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:22px; }
   .chip{
@@ -1294,36 +1288,28 @@ svg.leaflet-image-layer.leaflet-interactive path {
 </div>
 
 <header class="hero">
-  <svg class="contour-bg" viewBox="0 0 900 400" preserveAspectRatio="none" aria-hidden="true">
-    <path d="M0,50 C150,25 300,75 450,50 C600,25 750,75 900,50" fill="none" stroke="#859E97" stroke-width="1.4" opacity="0.55"/>
-    <path d="M0,95 C160,130 320,65 480,95 C640,125 800,65 900,90" fill="none" stroke="#859E97" stroke-width="1.4" opacity="0.48"/>
-    <path d="M0,142 C140,102 300,178 450,142 C600,106 760,178 900,144" fill="none" stroke="#797D81" stroke-width="1.4" opacity="0.42"/>
-    <path d="M0,190 C170,222 330,158 480,190 C630,220 790,160 900,188" fill="none" stroke="#797D81" stroke-width="1.4" opacity="0.36"/>
-    <path d="M0,240 C150,198 300,282 450,240 C600,200 750,280 900,238" fill="none" stroke="#859E97" stroke-width="1.4" opacity="0.3"/>
-    <path d="M0,290 C160,326 320,256 480,290 C640,322 800,258 900,288" fill="none" stroke="#797D81" stroke-width="1.4" opacity="0.24"/>
-    <path d="M0,340 C150,308 300,372 450,340 C600,310 750,370 900,338" fill="none" stroke="#859E97" stroke-width="1.4" opacity="0.18"/>
-  </svg>
   <div class="wrap hero-inner">
-    <div class="coords">43°21′44″N · 77°04′12″E — CONTOUR INTERVAL 40M</div>
-    <div class="eyebrow">Decision Point Engine</div>
-    <h1>PeakGuard</h1>
-    <p class="hero-tagline">Know when to turn back — before it becomes an emergency.</p>
-    <p class="hero-sub">PeakGuard analyzes your route, pace, weather, daylight and personal experience to warn you before a hike becomes dangerous.</p>
+    <div class="hero-layout">
+      <div class="hero-copy">
+        <div class="coords">43°21′44″N · 77°04′12″E — CONTOUR INTERVAL 40M</div>
+        <div class="eyebrow">Decision Point Engine</div>
+        <h1>PeakGuard</h1>
+        <p class="hero-tagline">Know when to turn back — before it becomes an emergency.</p>
+        <p class="hero-sub">PeakGuard analyzes your route, pace, weather, daylight and personal experience to warn you before a hike becomes dangerous.</p>
 
-    <div class="btn-row">
-      <button class="btn btn-primary" id="openDemoHero" type="button">Try PeakGuard</button>
-      <button class="btn btn-ghost" id="btnHow" type="button">See how it works</button>
-    </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="openDemoHero" type="button">Try PeakGuard</button>
+          <button class="btn btn-ghost" id="btnHow" type="button">See how it works</button>
+        </div>
 
-    <div class="chips">
-      <span class="chip">Offline-first</span>
-      <span class="chip">Explainable risk score</span>
-      <span class="chip">Proactive, not reactive</span>
-    </div>
+        <div class="chips">
+          <span class="chip">Offline-first</span>
+          <span class="chip">Explainable risk score</span>
+          <span class="chip">Proactive, not reactive</span>
+        </div>
+      </div>
 
-    <div class="hero-grid" style="margin-top:34px;">
-      <div></div>
-      <div class="map-panel reveal">
+      <div class="map-panel reveal hero-visual">
         <div class="map-head">
           <span class="map-label">Route Monitor</span>
           <span class="map-live">Tracking</span>
@@ -3137,6 +3123,4 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
 })();
 </script>
-
-</body>
-</html>
+</body></html>
