@@ -1210,6 +1210,80 @@ svg.leaflet-image-layer.leaflet-interactive path {
 .gps-card .app-p{ margin-top:8px; }
 .gps-card .app-btn{ margin-top:18px; }
 .gps-card .app-link-btn{ margin-top:12px; color:var(--stone); }
+
+/* ---------- registration ---------- */
+.app-screen.center{ align-items:center; justify-content:center; background:var(--paper-deep); }
+.reg-card{ width:min(92%, 460px); max-height:92%; overflow-y:auto; padding:8px 4px; }
+.reg-field{ margin-top:16px; }
+.reg-field label{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.06em; text-transform:uppercase; color:var(--stone); }
+.reg-field input[type=text], .reg-field input[type=number], .reg-field input[type=tel]{
+  display:block; margin-top:6px; width:100%; padding:10px 11px; border-radius:6px; border:1px solid var(--stone-line);
+  background:var(--paper); font-family:var(--font-body); font-size:14px; color:var(--ink); box-sizing:border-box;
+}
+.reg-optional-tag{ font-family:var(--font-mono); font-size:9.5px; color:var(--stone); text-transform:none; letter-spacing:0.02em; margin-left:6px; }
+.reg-error{ margin-top:10px; font-size:12px; color:var(--alert); display:none; }
+.reg-error.show{ display:block; }
+
+/* ---------- profile chip ---------- */
+.profile-chip{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; border:1px solid var(--line); border-radius:8px; background:var(--panel); }
+.profile-chip .pc-main{ font-size:13px; color:var(--ink); font-weight:700; }
+.profile-chip .pc-sub{ font-family:var(--font-mono); font-size:10.5px; color:var(--stone); margin-top:2px; text-transform:uppercase; letter-spacing:0.04em; }
+.profile-chip .pc-edit{ font-family:var(--font-mono); font-size:11px; color:var(--stone); text-decoration:underline; background:none; border:none; cursor:pointer; flex:none; }
+
+/* ---------- location search ---------- */
+.search-row{ margin-top:14px; position:relative; }
+.search-row input[type=text]{
+  display:block; width:100%; padding:10px 34px 10px 11px; border-radius:6px; border:1px solid var(--stone-line);
+  background:var(--paper); font-family:var(--font-body); font-size:13.5px; color:var(--ink); box-sizing:border-box;
+}
+.search-spinner{ position:absolute; right:10px; top:34px; font-family:var(--font-mono); font-size:10px; color:var(--stone); display:none; }
+.search-spinner.show{ display:block; }
+.search-results{ margin-top:6px; border:1px solid var(--line); border-radius:8px; overflow:hidden; display:none; background:var(--paper); }
+.search-results.show{ display:block; }
+.search-result-item{ display:block; width:100%; text-align:left; padding:9px 11px; border:none; border-bottom:1px solid var(--line); background:var(--paper); cursor:pointer; font-size:12.5px; color:var(--ink); }
+.search-result-item:last-child{ border-bottom:none; }
+.search-result-item:hover{ background:var(--brand-tint); }
+.search-result-item .sr-name{ font-weight:700; }
+.search-result-item .sr-meta{ font-family:var(--font-mono); font-size:10.5px; color:var(--stone); margin-top:2px; }
+.search-empty{ padding:9px 11px; font-size:12px; color:var(--stone); }
+.preset-chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+.preset-chip{ font-family:var(--font-mono); font-size:10.5px; padding:5px 10px; border-radius:999px; border:1px solid var(--stone-line); background:transparent; color:var(--ink-soft); cursor:pointer; }
+.preset-chip:hover{ background:var(--panel); }
+.search-target-note{ margin-top:6px; font-family:var(--font-mono); font-size:10.5px; color:var(--stone); }
+
+/* ---------- analysis: sections ---------- */
+.an-section{ margin-top:26px; padding-top:20px; border-top:1px solid var(--line); }
+.an-section:first-child{ margin-top:8px; padding-top:0; border-top:none; }
+.an-section-title{ font-family:var(--font-mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--sage); }
+.data-unavailable{ font-family:var(--font-mono); font-size:12px; color:var(--stone); font-style:italic; margin-top:8px; }
+
+/* ---------- risk breakdown ---------- */
+.risk-breakdown{ margin-top:14px; display:flex; flex-direction:column; gap:8px; }
+.rb-row{ display:flex; align-items:center; gap:10px; }
+.rb-label{ width:112px; flex:none; font-size:12px; color:var(--ink-soft); }
+.rb-bar-track{ flex:1; height:7px; border-radius:99px; background:var(--panel); overflow:hidden; }
+.rb-bar-fill{ height:100%; background:var(--brand); border-radius:99px; }
+.rb-bar-fill.mid{ background:var(--amber); }
+.rb-bar-fill.high{ background:var(--alert); }
+.rb-val{ width:66px; flex:none; text-align:right; font-family:var(--font-mono); font-size:12px; color:var(--ink); font-weight:700; }
+.rb-val.na{ color:var(--stone); font-weight:400; font-style:italic; }
+
+/* ---------- weather analysis ---------- */
+.weather-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+.weather-cell{ padding:9px 11px; border:1px solid var(--line); border-radius:8px; background:var(--panel); }
+.weather-cell .wk{ font-family:var(--font-mono); font-size:9.5px; letter-spacing:0.05em; text-transform:uppercase; color:var(--stone); }
+.weather-cell .wv{ font-family:var(--font-mono); font-size:14px; color:var(--ink); font-weight:700; margin-top:3px; }
+.weather-reasons{ margin-top:10px; display:flex; flex-direction:column; gap:6px; }
+.weather-reasons .wr-item{ font-size:12.5px; color:var(--ink-soft); padding-left:14px; position:relative; line-height:1.45; }
+.weather-reasons .wr-item::before{ content:'—'; position:absolute; left:0; color:var(--stone); }
+
+/* ---------- terrain analysis ---------- */
+.terrain-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+.elev-chart-wrap{ margin-top:14px; }
+.elev-chart-wrap svg{ display:block; width:100%; height:auto; }
+.elev-chart-label{ font-family:var(--font-mono); font-size:9.5px; color:var(--stone); text-transform:uppercase; letter-spacing:0.04em; margin-top:4px; display:flex; justify-content:space-between; }
+
+.dc-why{ margin-top:10px; font-size:12.5px; color:#cfe3d7; line-height:1.5; }
 </style>
 
 <div class="topbar">
@@ -1286,12 +1360,79 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
     <div class="app-body">
 
-      <!-- SCREEN 1 — PLAN (draw your route on a real map) -->
+      <!-- SCREEN 0 — REGISTRATION -->
+      <div class="app-screen center" id="app-register">
+        <div class="reg-card">
+          <div class="app-h1">Welcome to PeakGuard</div>
+          <p class="app-p">A short profile so PeakGuard can calculate a risk score that's actually about you — not a generic hiker.</p>
+
+          <div class="reg-field">
+            <label for="regName">Name</label>
+            <input type="text" id="regName" placeholder="Your name" autocomplete="off">
+          </div>
+          <div class="reg-field">
+            <label for="regAge">Age</label>
+            <input type="number" id="regAge" min="10" max="100" placeholder="Age">
+          </div>
+
+          <div class="reg-field">
+            <label>Experience level</label>
+            <div class="seg-row" id="regExpRow">
+              <button class="seg-btn" data-exp="novice" type="button">Beginner</button>
+              <button class="seg-btn active" data-exp="medium" type="button">Intermediate</button>
+              <button class="seg-btn" data-exp="expert" type="button">Experienced</button>
+            </div>
+          </div>
+
+          <div class="reg-field">
+            <label>Fitness level</label>
+            <div class="seg-row" id="regFitRow">
+              <button class="seg-btn" data-fit="low" type="button">Low</button>
+              <button class="seg-btn active" data-fit="medium" type="button">Medium</button>
+              <button class="seg-btn" data-fit="high" type="button">High</button>
+            </div>
+          </div>
+
+          <div class="reg-field">
+            <label>Emergency contact <span class="reg-optional-tag">optional</span></label>
+            <input type="text" id="regEmName" placeholder="Contact name" style="margin-top:6px;" autocomplete="off">
+            <input type="tel" id="regEmPhone" placeholder="Phone number" style="margin-top:8px;" autocomplete="off">
+          </div>
+
+          <div class="reg-error" id="regError">Please enter your name and age.</div>
+          <button class="app-btn" id="btnRegSubmit" type="button">Start using PeakGuard</button>
+        </div>
+      </div>
+
+      <!-- SCREEN 1 — PLAN (draw your route on a real map, or search a place) -->
       <div class="app-screen" id="app-plan">
         <div class="app-cols">
           <div class="app-side">
             <div class="app-h1">Plan your hike</div>
+
+            <div class="profile-chip" style="margin-top:14px;">
+              <div>
+                <div class="pc-main" id="pcMain">—</div>
+                <div class="pc-sub" id="pcSub">—</div>
+              </div>
+              <button class="pc-edit" id="btnEditProfile" type="button">Edit</button>
+            </div>
+
             <p class="app-p" id="drawHint">Tap the map to place your <b>Start</b> point.</p>
+
+            <span class="app-label">Search a place</span>
+            <div class="search-row">
+              <input type="text" id="locSearchInput" placeholder="e.g. Medeu, Shymbulak, Kok-Zhailau…" autocomplete="off">
+              <span class="search-spinner" id="locSearchSpinner">…</span>
+              <div class="search-results" id="locSearchResults"></div>
+            </div>
+            <div class="preset-chips">
+              <button class="preset-chip" type="button" data-preset="Medeu">Medeu</button>
+              <button class="preset-chip" type="button" data-preset="Shymbulak">Shymbulak</button>
+              <button class="preset-chip" type="button" data-preset="Kok-Zhailau">Kok-Zhailau</button>
+              <button class="preset-chip" type="button" data-preset="Furmanov Peak">Furmanov Peak</button>
+            </div>
+            <div class="search-target-note" id="searchTargetNote">Search sets your next route point (Start).</div>
 
             <div class="route-points" id="routePointsList">
               <div class="rp-item active" data-pt="start"><span class="rp-tag">Start</span><span class="rp-val" id="rpStartVal">Tap map</span></div>
@@ -1301,20 +1442,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
             <div class="route-actions">
               <button class="app-link-btn" id="btnUndoPoint" type="button">Undo last point</button>
               <button class="app-link-btn" id="btnResetRoute" type="button">Reset route</button>
-            </div>
-
-            <span class="app-label">Your experience</span>
-            <div class="seg-row" id="expRow">
-              <button class="seg-btn" data-exp="novice" type="button">Beginner</button>
-              <button class="seg-btn active" data-exp="medium" type="button">Intermediate</button>
-              <button class="seg-btn" data-exp="expert" type="button">Experienced</button>
-            </div>
-
-            <span class="app-label">Conditions</span>
-            <div class="seg-row" id="condRow">
-              <button class="seg-btn active" data-cond="clear" type="button">Clear</button>
-              <button class="seg-btn" data-cond="variable" type="button">Variable</button>
-              <button class="seg-btn" data-cond="poor" type="button">Poor</button>
             </div>
 
             <div class="field-row">
@@ -1341,27 +1468,53 @@ svg.leaflet-image-layer.leaflet-interactive path {
       <div class="app-screen" id="app-analysis" hidden>
         <div class="app-cols">
           <div class="app-side">
+
             <div class="app-h1">Route analysis</div>
-            <div class="risk-hero">
-              <div class="num" id="riskScoreOut">— <span>/100</span></div>
-              <div class="band" id="riskBandOut">—</div>
-            </div>
-            <div class="risk-why" id="riskWhyOut"></div>
 
-            <div class="decision-card">
-              <div class="dc-label">Decision point</div>
-              <div class="dc-time">Reach before <span id="dcDeadline">—</span></div>
-              <div class="dc-note">If you arrive later, turning back is recommended.</div>
+            <div class="an-section">
+              <div class="an-section-title">Risk Score</div>
+              <div class="risk-hero">
+                <div class="num" id="riskScoreOut">— <span>/100</span></div>
+                <div class="band" id="riskBandOut">—</div>
+              </div>
+              <div class="risk-breakdown" id="riskBreakdownOut"></div>
             </div>
 
-            <div style="margin-top:16px;">
-              <div class="mini-kv-row"><span>Sunset</span><span class="v" id="anSunset">—</span></div>
-              <div class="mini-kv-row"><span>Expected finish</span><span class="v" id="anFinish">—</span></div>
-              <div class="mini-kv-row"><span>Safety buffer</span><span class="v">45 min</span></div>
+            <div class="an-section">
+              <div class="an-section-title">Decision Point</div>
+              <div class="decision-card">
+                <div class="dc-label">Reach before</div>
+                <div class="dc-time" id="dcDeadline">—</div>
+                <div class="dc-why" id="dcWhy">—</div>
+              </div>
             </div>
 
-            <button class="app-btn" id="btnDownloadStart" type="button">Download route &amp; start</button>
-            <button class="app-btn ghost" id="btnChooseAnother" type="button">Choose another route</button>
+            <div class="an-section">
+              <div class="an-section-title">Weather Analysis</div>
+              <div class="weather-grid" id="weatherGrid" hidden></div>
+              <div class="weather-reasons" id="weatherReasons"></div>
+              <div class="data-unavailable" id="weatherUnavailable" hidden>Data unavailable</div>
+            </div>
+
+            <div class="an-section">
+              <div class="an-section-title">Terrain Analysis</div>
+              <div class="terrain-grid" id="terrainGrid" hidden></div>
+              <div class="elev-chart-wrap" id="elevChartWrap" hidden></div>
+              <div class="weather-reasons" id="terrainReasons"></div>
+              <div class="data-unavailable" id="terrainUnavailable" hidden>Data unavailable</div>
+            </div>
+
+            <div class="an-section">
+              <div class="an-section-title">Safety recommendation</div>
+              <p class="app-p" id="anRecommendation">—</p>
+              <div style="margin-top:12px;">
+                <div class="mini-kv-row"><span>Sunset</span><span class="v" id="anSunset">—</span></div>
+                <div class="mini-kv-row"><span>Expected finish</span><span class="v" id="anFinish">—</span></div>
+                <div class="mini-kv-row"><span>Safety buffer</span><span class="v">45 min</span></div>
+              </div>
+              <button class="app-btn" id="btnDownloadStart" type="button">Download route &amp; start</button>
+              <button class="app-btn ghost" id="btnChooseAnother" type="button">Choose another route</button>
+            </div>
           </div>
           <div class="app-map-wrap">
             <span class="map-badge"><span class="dot"></span>Route Monitor</span>
@@ -1393,6 +1546,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
               <div class="stat-cell"><div class="sk">Est. finish</div><div class="sv" id="stFinish">—</div></div>
               <div class="stat-cell"><div class="sk">Sunset</div><div class="sv" id="stSunset">—</div></div>
               <div class="stat-cell"><div class="sk">Battery</div><div class="sv" id="stBattery">—</div></div>
+              <div class="stat-cell"><div class="sk">Route deviation</div><div class="sv" id="stDeviation">—</div></div>
             </div>
 
             <div class="decision-window" id="dwBlock">
@@ -1883,22 +2037,47 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
   /* ---------- app product demo (Try PeakGuard) — real GPS + Leaflet map ---------- */
   var PACE_BY_EXP = { novice:2.6, medium:3.6, expert:4.6 };
-  var EXP_RISK = { novice:78, medium:46, expert:18 };
-  var COND_RISK = { clear:15, variable:50, poor:85 };
+  var EXP_RISK = { novice:60, medium:32, expert:12 };
+  var FITNESS_PACE_MULT = { low:0.85, medium:1.0, high:1.18 };
+  var FITNESS_RISK = { low:14, medium:6, high:0 };
   var SAFETY_BUFFER_MIN = 45;
   var SIM_TICK_MS = 250, SIM_SPEEDUP = 110;
+  var GEOCODE_URL = "https://geocoding-api.open-meteo.com/v1/search";
+  var WEATHER_URL = "https://api.open-meteo.com/v1/forecast";
+  var ELEVATION_URL = "https://api.open-meteo.com/v1/elevation";
+  var PROFILE_KEY = "peakguard_profile_v1";
+
+  /* ---------- user profile (registration) ---------- */
+  function loadProfile(){
+    try {
+      var raw = localStorage.getItem(PROFILE_KEY);
+      if(!raw) return null;
+      var p = JSON.parse(raw);
+      if(!p || !p.name) return null;
+      return p;
+    } catch(e){ return null; }
+  }
+  function saveProfile(p){
+    try { localStorage.setItem(PROFILE_KEY, JSON.stringify(p)); } catch(e){}
+  }
+  var profile = loadProfile();
 
   var el = {};
   [
     "appOverlay","appClose","appStepLabel","openDemoTop","openDemoHero","openDemoFinal",
-    "app-plan","app-analysis","app-track","app-emergency",
+    "app-register","app-plan","app-analysis","app-track","app-emergency",
+    "regName","regAge","regEmName","regEmPhone","regError","btnRegSubmit",
+    "pcMain","pcSub","btnEditProfile",
+    "locSearchInput","locSearchSpinner","locSearchResults","searchTargetNote",
     "drawHint","btnUndoPoint","btnResetRoute","btnUseMyLocation",
     "rpStartVal","rpDecisionVal","rpFinishVal",
     "startTimeInput","planDurationOut","btnAnalyze",
-    "riskScoreOut","riskBandOut","riskWhyOut","dcDeadline","anSunset","anFinish",
+    "riskScoreOut","riskBandOut","riskBreakdownOut","dcDeadline","dcWhy","anSunset","anFinish","anRecommendation",
+    "weatherGrid","weatherReasons","weatherUnavailable",
+    "terrainGrid","elevChartWrap","terrainReasons","terrainUnavailable",
     "btnDownloadStart","btnChooseAnother",
     "trackBadge","trackOverlayPanel","gpsGate","btnEnableGps","btnSimulateInstead",
-    "stRisk","stDistLeft","stPace","stFinish","stSunset","stBattery",
+    "stRisk","stDistLeft","stPace","stFinish","stSunset","stBattery","stDeviation",
     "dwBlock","dwTimeLeft","dwDist","dwDeadline",
     "offlineStatus","offlineWeather","btnSimSlow","btnSimOffline",
     "alertPanel","alFrom","alTo","alBehindText","alSunsetText","alRecommend","btnTurnback","btnContinueAnyway",
@@ -1907,11 +2086,56 @@ svg.leaflet-image-layer.leaflet-interactive path {
     "emgSentPanel","emgCoords2","emgSentAt","btnRestartFromEmg"
   ].forEach(function(id){ el[id] = document.getElementById(id); });
 
-  var expBtns = document.querySelectorAll("#expRow .seg-btn");
-  var condBtns = document.querySelectorAll("#condRow .seg-btn");
+  var regExpBtns = document.querySelectorAll("#regExpRow .seg-btn");
+  var regFitBtns = document.querySelectorAll("#regFitRow .seg-btn");
+  var regExp = "medium", regFit = "medium";
+  regExpBtns.forEach(function(b){
+    b.addEventListener("click", function(){ regExpBtns.forEach(function(x){x.classList.remove("active");}); b.classList.add("active"); regExp = b.getAttribute("data-exp"); });
+  });
+  regFitBtns.forEach(function(b){
+    b.addEventListener("click", function(){ regFitBtns.forEach(function(x){x.classList.remove("active");}); b.classList.add("active"); regFit = b.getAttribute("data-fit"); });
+  });
+  function fillRegForm(p){
+    el.regName.value = p && p.name ? p.name : "";
+    el.regAge.value = p && p.age ? p.age : "";
+    el.regEmName.value = p && p.emName ? p.emName : "";
+    el.regEmPhone.value = p && p.emPhone ? p.emPhone : "";
+    regExp = (p && p.experience) || "medium";
+    regFit = (p && p.fitness) || "medium";
+    regExpBtns.forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-exp")===regExp); });
+    regFitBtns.forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-fit")===regFit); });
+  }
+  function updateProfileChip(){
+    if(!profile) return;
+    var expLabel = { novice:"Beginner", medium:"Intermediate", expert:"Experienced" }[profile.experience] || profile.experience;
+    var fitLabel = { low:"Low", medium:"Medium", high:"High" }[profile.fitness] || profile.fitness;
+    if(el.pcMain) el.pcMain.textContent = profile.name + (profile.age ? ", " + profile.age : "");
+    if(el.pcSub) el.pcSub.textContent = expLabel + " · " + fitLabel + " fitness";
+  }
+  el.btnRegSubmit.addEventListener("click", function(){
+    var name = (el.regName.value||"").trim();
+    var age = parseInt(el.regAge.value,10);
+    if(!name || !age || age<10 || age>100){
+      el.regError.classList.add("show");
+      return;
+    }
+    el.regError.classList.remove("show");
+    profile = {
+      name: name, age: age, experience: regExp, fitness: regFit,
+      emName: (el.regEmName.value||"").trim(), emPhone: (el.regEmPhone.value||"").trim()
+    };
+    saveProfile(profile);
+    updateProfileChip();
+    resetAll();
+    showAppScreen("app-plan");
+  });
+  el.btnEditProfile.addEventListener("click", function(){
+    fillRegForm(profile);
+    showAppScreen("app-register");
+  });
 
-  var SCREENS = ["app-plan","app-analysis","app-track","app-emergency"];
-  var STEP_LABELS = { "app-plan":"Plan your hike", "app-analysis":"Route analysis", "app-track":"Active hike", "app-emergency":"Emergency mode" };
+  var SCREENS = ["app-register","app-plan","app-analysis","app-track","app-emergency"];
+  var STEP_LABELS = { "app-register":"Welcome", "app-plan":"Plan your hike", "app-analysis":"Route analysis", "app-track":"Active hike", "app-emergency":"Emergency mode" };
   var currentScreen = null;
 
   function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
@@ -1944,6 +2168,21 @@ svg.leaflet-image-layer.leaflet-interactive path {
     return 2*R*Math.asin(Math.min(1,Math.sqrt(h)));
   }
   function lerpLatLng(a,b,t){ return { lat:a.lat+(b.lat-a.lat)*t, lng:a.lng+(b.lng-a.lng)*t }; }
+  function distToSegmentKm(p, a, b){
+    var latRef = toRad((a.lat+b.lat)/2);
+    var kx = 111.32*Math.cos(latRef), ky = 110.57;
+    var bx=(b.lng-a.lng)*kx, by=(b.lat-a.lat)*ky;
+    var px=(p.lng-a.lng)*kx, py=(p.lat-a.lat)*ky;
+    var lenSq = bx*bx+by*by;
+    var t = lenSq>0 ? Math.max(0,Math.min(1,(px*bx+py*by)/lenSq)) : 0;
+    var cx=t*bx, cy=t*by;
+    var dx=px-cx, dy=py-cy;
+    return Math.sqrt(dx*dx+dy*dy);
+  }
+  function distanceToRouteKm(p){
+    if(!pts.start||!pts.decision||!pts.finish) return 0;
+    return Math.min(distToSegmentKm(p, pts.start, pts.decision), distToSegmentKm(p, pts.decision, pts.finish));
+  }
   function sunsetDateFor(lat,lng,baseDate){
     var dayOfYear = Math.floor((Date.UTC(baseDate.getFullYear(),baseDate.getMonth(),baseDate.getDate()) - Date.UTC(baseDate.getFullYear(),0,0))/86400000);
     var lngHour = lng/15;
@@ -2020,7 +2259,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
   /* ---------- route drawing state (screen 1) ---------- */
   var pts = { start:null, decision:null, finish:null };
   var ptOrder = ["start","decision","finish"];
-  var exp = "medium", cond = "clear";
   var plan = null;
 
   function nextPointKey(){
@@ -2030,12 +2268,19 @@ svg.leaflet-image-layer.leaflet-interactive path {
   function updateRoutePointsUI(){
     var next = nextPointKey();
     var hints = {
-      start:"Tap the map to place your <b>Start</b> point.",
-      decision:"Now tap to place your <b>Decision Point</b> — the point beyond which you commit to finishing.",
-      finish:"Now tap to place your <b>Finish</b> point.",
-      none:"Route ready. Set your experience and start time, then analyze."
+      start:"Tap the map or search a place to set your <b>Start</b> point.",
+      decision:"Now tap the map or search to place your <b>Decision Point</b> — the point beyond which you commit to finishing.",
+      finish:"Now tap the map or search to place your <b>Finish</b> point.",
+      none:"Route ready. Set your start time, then analyze."
     };
     if(el.drawHint) el.drawHint.innerHTML = hints[next || "none"];
+    var searchNotes = {
+      start:"Search sets your next route point (Start).",
+      decision:"Search sets your next route point (Decision Point).",
+      finish:"Search sets your next route point (Finish).",
+      none:"Route complete — reset it to search a new point."
+    };
+    if(el.searchTargetNote) el.searchTargetNote.textContent = searchNotes[next || "none"];
     ["start","decision","finish"].forEach(function(k){
       var item = document.querySelector('.rp-item[data-pt="'+k+'"]');
       var valEl = k==="start"?el.rpStartVal:(k==="decision"?el.rpDecisionVal:el.rpFinishVal);
@@ -2101,70 +2346,355 @@ svg.leaflet-image-layer.leaflet-interactive path {
       var latlng = { lat:pos.coords.latitude, lng:pos.coords.longitude };
       var map = attachMapTo("planMapHost");
       map.setView([latlng.lat,latlng.lng], 14);
-      if(!pts.start){ pts.start = latlng; updateRoutePointsUI(); drawPlanLayers(); }
+      var key = nextPointKey();
+      if(key){ pts[key] = latlng; updateRoutePointsUI(); drawPlanLayers(); }
     }, function(err){
       el.btnUseMyLocation.textContent = "Use my location";
       el.drawHint.textContent = "Couldn't get your location ("+((err&&err.message)||"permission denied")+"). Tap the map instead.";
     }, { enableHighAccuracy:true, timeout:8000 });
   });
 
-  expBtns.forEach(function(b){
-    b.addEventListener("click", function(){
-      expBtns.forEach(function(x){ x.classList.remove("active"); });
-      b.classList.add("active");
-      exp = b.getAttribute("data-exp");
+  /* ---------- location search (Open-Meteo Geocoding) ---------- */
+  var searchDebounceTimer = null;
+  var lastSearchResults = [];
+  function fetchWithTimeout(url, ms){
+    return new Promise(function(resolve, reject){
+      var done = false;
+      var timer = setTimeout(function(){ if(!done){ done = true; reject(new Error("timeout")); } }, ms || 9000);
+      fetch(url).then(function(r){
+        if(done) return; done = true; clearTimeout(timer); resolve(r);
+      }, function(e){
+        if(done) return; done = true; clearTimeout(timer); reject(e);
+      });
     });
-  });
-  condBtns.forEach(function(b){
-    b.addEventListener("click", function(){
-      condBtns.forEach(function(x){ x.classList.remove("active"); });
-      b.classList.add("active");
-      cond = b.getAttribute("data-cond");
+  }
+  function selectSearchResult(it){
+    var key = nextPointKey();
+    if(!key){ el.locSearchResults.classList.remove("show"); el.drawHint.innerHTML = "Route already has 3 points. Reset the route to search a new one."; return; }
+    var latlng = { lat: it.latitude, lng: it.longitude };
+    pts[key] = latlng;
+    updateRoutePointsUI();
+    drawPlanLayers();
+    var map = attachMapTo("planMapHost");
+    map.setView([latlng.lat, latlng.lng], 13);
+    el.locSearchResults.classList.remove("show");
+    el.locSearchInput.value = it.name;
+  }
+  function renderSearchResults(items){
+    lastSearchResults = items || [];
+    if(lastSearchResults.length===0){
+      el.locSearchResults.innerHTML = '<div class="search-empty">No results found.</div>';
+      el.locSearchResults.classList.add("show");
+      return;
+    }
+    el.locSearchResults.innerHTML = lastSearchResults.map(function(it, idx){
+      var meta = [it.admin1, it.country].filter(Boolean).join(", ");
+      return '<button type="button" class="search-result-item" data-idx="'+idx+'"><div class="sr-name">'+it.name+'</div><div class="sr-meta">'+(meta?meta+" · ":"")+it.latitude.toFixed(3)+', '+it.longitude.toFixed(3)+'</div></button>';
+    }).join("");
+    el.locSearchResults.classList.add("show");
+    el.locSearchResults.querySelectorAll(".search-result-item").forEach(function(btn){
+      btn.addEventListener("click", function(){ selectSearchResult(lastSearchResults[parseInt(btn.getAttribute("data-idx"),10)]); });
+    });
+  }
+  function runSearch(query){
+    if(!query || query.trim().length<2){ el.locSearchResults.classList.remove("show"); return; }
+    el.locSearchSpinner.classList.add("show");
+    fetchWithTimeout(GEOCODE_URL+"?name="+encodeURIComponent(query.trim())+"&count=6&language=en&format=json", 8000)
+      .then(function(r){ if(!r.ok) throw new Error("geocode http "+r.status); return r.json(); })
+      .then(function(data){
+        el.locSearchSpinner.classList.remove("show");
+        renderSearchResults((data && data.results) || []);
+      })
+      .catch(function(){
+        el.locSearchSpinner.classList.remove("show");
+        el.locSearchResults.innerHTML = '<div class="search-empty">Data unavailable — check your connection.</div>';
+        el.locSearchResults.classList.add("show");
+      });
+  }
+  if(el.locSearchInput){
+    el.locSearchInput.addEventListener("input", function(){
+      var v = el.locSearchInput.value;
+      if(searchDebounceTimer) clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(function(){ runSearch(v); }, 450);
+    });
+  }
+  document.querySelectorAll(".preset-chip").forEach(function(chip){
+    chip.addEventListener("click", function(){
+      var name = chip.getAttribute("data-preset");
+      el.locSearchInput.value = name;
+      runSearch(name);
     });
   });
 
-  /* ---------- route analysis ---------- */
-  function computePlan(){
+  /* ---------- real weather (Open-Meteo forecast) ---------- */
+  function wmoText(code){
+    var map = {0:"Clear sky",1:"Mainly clear",2:"Partly cloudy",3:"Overcast",45:"Fog",48:"Depositing rime fog",
+      51:"Light drizzle",53:"Drizzle",55:"Dense drizzle",56:"Freezing drizzle",57:"Freezing drizzle",
+      61:"Slight rain",63:"Rain",65:"Heavy rain",66:"Freezing rain",67:"Freezing rain",
+      71:"Slight snow",73:"Snow",75:"Heavy snow",77:"Snow grains",
+      80:"Rain showers",81:"Rain showers",82:"Violent rain showers",
+      85:"Snow showers",86:"Snow showers",95:"Thunderstorm",96:"Thunderstorm with hail",99:"Thunderstorm with heavy hail"};
+    return map[code] || "Mixed conditions";
+  }
+  function parseLocalIso(ts){ var p = ts.split(/[-T:]/); return new Date(+p[0], +p[1]-1, +p[2], +p[3], +p[4]||0); }
+  function processWeather(data, startDate, durationHours){
+    var h = data.hourly;
+    if(!h || !h.time || !h.time.length) throw new Error("empty forecast");
+    var times = h.time;
+    var startIdx = 0, bestDiff = Infinity;
+    for(var i=0;i<times.length;i++){
+      var d = Math.abs(parseLocalIso(times[i]).getTime() - startDate.getTime());
+      if(d<bestDiff){ bestDiff=d; startIdx=i; }
+    }
+    var endTime = startDate.getTime() + Math.max(1,durationHours)*3600000;
+    var endIdx = startIdx;
+    for(var j=startIdx;j<times.length;j++){ endIdx=j; if(parseLocalIso(times[j]).getTime() >= endTime) break; }
+    endIdx = Math.max(endIdx, startIdx);
+
+    var maxPrecipProb=0, maxWind=0, maxGust=0, worstCode=h.weathercode[startIdx]||0, worsensAt=null;
+    for(var k=startIdx;k<=endIdx;k++){
+      if((h.precipitation_probability[k]||0) > maxPrecipProb) maxPrecipProb = h.precipitation_probability[k];
+      if((h.windspeed_10m[k]||0) > maxWind) maxWind = h.windspeed_10m[k];
+      if((h.windgusts_10m[k]||0) > maxGust) maxGust = h.windgusts_10m[k];
+      if((h.precipitation_probability[k]||0) >= 50 && !worsensAt && k>startIdx) worsensAt = parseLocalIso(times[k]);
+      if((h.weathercode[k]||0) > worstCode) worstCode = h.weathercode[k];
+    }
+    var reasons = [];
+    if(worsensAt) reasons.push("Rain probability increases after "+fmtClockDate(worsensAt)+" (up to "+Math.round(maxPrecipProb)+"%).");
+    if(maxGust>=40) reasons.push("Wind gusts up to "+Math.round(maxGust)+" km/h expected near the upper section.");
+    if(worstCode>=95) reasons.push("Thunderstorm risk in the forecast window — consider postponing.");
+    if(reasons.length===0) reasons.push("Conditions look stable for the planned window.");
+    var riskScore = clamp(maxPrecipProb*0.5 + clamp((maxGust-20)*2,0,50) + (worstCode>=95?30:0), 0, 100);
+    return {
+      temp: h.temperature_2m[startIdx], feelsLike: h.apparent_temperature[startIdx],
+      maxPrecipProb: maxPrecipProb, precipAmount: h.precipitation ? h.precipitation[startIdx] : 0,
+      maxWind: maxWind, maxGust: maxGust, conditionText: wmoText(h.weathercode[startIdx]),
+      visibility: (h.visibility && h.visibility[startIdx]!=null) ? h.visibility[startIdx] : null,
+      worsensAt: worsensAt, reasons: reasons, riskScore: riskScore
+    };
+  }
+  function fetchWeather(lat, lng, startDate, durationHours){
+    var url = WEATHER_URL+"?latitude="+lat.toFixed(5)+"&longitude="+lng.toFixed(5)
+      +"&hourly=temperature_2m,apparent_temperature,precipitation_probability,precipitation,windspeed_10m,windgusts_10m,weathercode,visibility"
+      +"&timezone=auto&forecast_days=2";
+    return fetchWithTimeout(url, 9000)
+      .then(function(r){ if(!r.ok) throw new Error("weather http "+r.status); return r.json(); })
+      .then(function(data){ return processWeather(data, startDate, durationHours); });
+  }
+
+  /* ---------- real terrain / elevation (Open-Meteo elevation) ---------- */
+  function sampleRoute(distOut, distTop, n){
+    var out = [];
+    for(var i=0;i<n;i++){
+      var frac = n>1 ? i/(n-1) : 0;
+      var distAlong = frac*(distOut+distTop);
+      var ll = distAlong<=distOut
+        ? lerpLatLng(pts.start, pts.decision, distOut>0 ? distAlong/distOut : 1)
+        : lerpLatLng(pts.decision, pts.finish, distTop>0 ? (distAlong-distOut)/distTop : 1);
+      out.push({ ll:ll, distKm:distAlong });
+    }
+    return out;
+  }
+  function processTerrain(samples, elevArr){
+    var gain=0, loss=0, maxElev=-Infinity, steepestAbsDeg=0, steepestRange=null, slopeSum=0;
+    for(var i=0;i<elevArr.length;i++){ if(elevArr[i]>maxElev) maxElev = elevArr[i]; }
+    for(var k=1;k<samples.length;k++){
+      var dElevM = elevArr[k]-elevArr[k-1];
+      var dDistKm = samples[k].distKm - samples[k-1].distKm;
+      var dDistM = Math.max(1, dDistKm*1000);
+      if(dElevM>0) gain += dElevM; else loss += Math.abs(dElevM);
+      var slopeDeg = Math.atan2(dElevM, dDistM)*180/Math.PI;
+      slopeSum += Math.abs(slopeDeg);
+      if(Math.abs(slopeDeg) > steepestAbsDeg){ steepestAbsDeg = Math.abs(slopeDeg); steepestRange = [samples[k-1].distKm, samples[k].distKm]; }
+    }
+    var avgSlopeDeg = samples.length>1 ? slopeSum/(samples.length-1) : 0;
+    var totalDist = samples[samples.length-1].distKm;
+    var reasons = [];
+    if(gain>50) reasons.push("+"+Math.round(gain)+" m elevation gain over "+totalDist.toFixed(1)+" km.");
+    if(steepestRange) reasons.push("Steepest section between km "+steepestRange[0].toFixed(1)+"–"+steepestRange[1].toFixed(1)+" (~"+Math.round(steepestAbsDeg)+"°).");
+    if(loss>150 && loss>gain*0.6) reasons.push("Long descent (~"+Math.round(loss)+" m) after the highest point — watch your pace going down.");
+    if(reasons.length===0) reasons.push("Gentle terrain — no major elevation risk detected.");
+    var riskScore = clamp(gain/12 + steepestAbsDeg*2.2, 0, 100);
+    return {
+      distances: samples.map(function(s){ return s.distKm; }), elevations: elevArr,
+      elevGain:gain, elevLoss:loss, maxElev:maxElev, avgSlopeDeg:avgSlopeDeg,
+      steepestAbsDeg:steepestAbsDeg, steepestRange:steepestRange, totalDist:totalDist,
+      riskScore:riskScore, reasons:reasons
+    };
+  }
+  function fetchTerrain(){
+    var distOut = haversineKm(pts.start, pts.decision);
+    var distTop = haversineKm(pts.decision, pts.finish);
+    var n = clamp(Math.round((distOut+distTop)/0.5), 8, 20);
+    var samples = sampleRoute(distOut, distTop, n);
+    var lats = samples.map(function(s){ return s.ll.lat.toFixed(6); }).join(",");
+    var lngs = samples.map(function(s){ return s.ll.lng.toFixed(6); }).join(",");
+    return fetchWithTimeout(ELEVATION_URL+"?latitude="+lats+"&longitude="+lngs, 9000)
+      .then(function(r){ if(!r.ok) throw new Error("elevation http "+r.status); return r.json(); })
+      .then(function(data){
+        if(!data || !data.elevation || data.elevation.length!==samples.length) throw new Error("bad elevation payload");
+        return processTerrain(samples, data.elevation);
+      });
+  }
+  function buildElevationSvg(distances, elevations){
+    var W=400,H=110,padL=4,padR=4,padT=8,padB=8;
+    var minE = Math.min.apply(null, elevations), maxE = Math.max.apply(null, elevations);
+    if(maxE===minE) maxE = minE+1;
+    var maxD = distances[distances.length-1] || 1;
+    function x(d){ return padL + (d/maxD)*(W-padL-padR); }
+    function y(e){ return H-padB - ((e-minE)/(maxE-minE))*(H-padT-padB); }
+    var pts2 = distances.map(function(d,i){ return x(d).toFixed(1)+","+y(elevations[i]).toFixed(1); });
+    var linePath = "M"+pts2.join(" L");
+    var areaPath = linePath + " L"+x(maxD).toFixed(1)+","+(H-padB)+" L"+x(0).toFixed(1)+","+(H-padB)+" Z";
+    var svg = '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">'
+      + '<path d="'+areaPath+'" fill="var(--brand-tint)" stroke="none"></path>'
+      + '<path d="'+linePath+'" fill="none" stroke="var(--brand)" stroke-width="2"></path>'
+      + '</svg>';
+    return svg + '<div class="elev-chart-label"><span>'+Math.round(minE)+' m</span><span>'+Math.round(maxE)+' m</span></div>';
+  }
+
+  /* ---------- route analysis (real weather + real terrain + explainable risk) ---------- */
+  function computePlanAsync(){
     var distOut = haversineKm(pts.start, pts.decision);
     var distTop = haversineKm(pts.decision, pts.finish);
     var distReturn = haversineKm(pts.decision, pts.start);
-    var pace = PACE_BY_EXP[exp];
-
-    var complexity = clamp(((distOut+distTop)/16)*60, 0, 100);
-    var weatherRisk = COND_RISK[cond];
-    var experienceRisk = EXP_RISK[exp];
+    var basePace = PACE_BY_EXP[profile.experience] * (FITNESS_PACE_MULT[profile.fitness] || 1);
 
     var startDate = new Date();
     var sp = (el.startTimeInput.value||"06:00").split(":");
     startDate.setHours(parseInt(sp[0],10)||6, parseInt(sp[1],10)||0, 0, 0);
 
     var sunset = sunsetDateFor(pts.start.lat, pts.start.lng, startDate);
-    var totalTripHours = (distOut+distTop)/pace;
+    var totalTripHours = (distOut+distTop)/basePace;
     var margin = sunset ? ((sunset-startDate)/3600000 - totalTripHours) : 6;
     var daylightRisk = clamp(100 - margin*22, 0, 100);
-
-    var pWeather = weatherRisk*0.30;
-    var pDifficulty = complexity*0.20;
-    var pPace = complexity*0.10;
-    var pExperience = experienceRisk*0.25;
-    var pDaylight = daylightRisk*0.15;
-    var risk = Math.round(pWeather+pDifficulty+pPace+pExperience+pDaylight);
-
     var remainingAfterDecision = Math.max(distTop, distReturn);
-    var decisionDeadline = sunset
-      ? new Date(sunset.getTime() - SAFETY_BUFFER_MIN*60000 - (remainingAfterDecision/pace)*3600000)
-      : new Date(startDate.getTime() + 8*3600000);
-    var finishDeadline = sunset
-      ? new Date(sunset.getTime() - SAFETY_BUFFER_MIN*60000)
-      : new Date(startDate.getTime() + 10*3600000);
 
-    plan = {
-      distOut:distOut, distTop:distTop, distReturn:distReturn, pace:pace,
-      risk:risk,
-      riskParts:{ weather:Math.round(pWeather), difficulty:Math.round(pDifficulty), pace:Math.round(pPace), experience:Math.round(pExperience), daylight:Math.round(pDaylight) },
-      startAt:startDate, sunset:sunset, decisionDeadline:decisionDeadline, finishDeadline:finishDeadline
-    };
-    return risk;
+    return Promise.allSettled([
+      fetchWeather(pts.start.lat, pts.start.lng, startDate, totalTripHours+1),
+      fetchTerrain()
+    ]).then(function(results){
+      var weather = (results[0] && results[0].status==="fulfilled") ? results[0].value : null;
+      var terrain = (results[1] && results[1].status==="fulfilled") ? results[1].value : null;
+
+      var expRisk = EXP_RISK[profile.experience];
+      var fitRisk = FITNESS_RISK[profile.fitness];
+      var mismatchBonus = 0;
+      if(profile.experience === "novice"){
+        var hard = terrain ? (terrain.elevGain>500 || terrain.steepestAbsDeg>22) : ((distOut+distTop) > 10);
+        if(hard) mismatchBonus = 18;
+      }
+      var experienceSub = clamp(expRisk*0.55 + fitRisk*0.45 + mismatchBonus, 0, 100);
+      var batterySub = realBatteryLevel!=null ? clamp((100-realBatteryLevel)*1.2, 0, 100) : null;
+
+      var weights = { weather:0.30, terrain:0.25, experience:0.25, daylight:0.15, battery:0.05 };
+      var parts = {
+        weather: weather ? Math.round(weights.weather*weather.riskScore) : null,
+        terrain: terrain ? Math.round(weights.terrain*terrain.riskScore) : null,
+        experience: Math.round(weights.experience*experienceSub),
+        daylight: Math.round(weights.daylight*daylightRisk),
+        battery: batterySub!=null ? Math.round(weights.battery*batterySub) : null
+      };
+      var risk = clamp(Math.round((parts.weather||0)+(parts.terrain||0)+parts.experience+parts.daylight+(parts.battery||0)), 0, 100);
+
+      var effPace = terrain ? basePace / (1 + clamp(terrain.elevGain/1000, 0, 0.6)) : basePace;
+      var decisionDeadline = sunset
+        ? new Date(sunset.getTime() - SAFETY_BUFFER_MIN*60000 - (remainingAfterDecision/effPace)*3600000)
+        : new Date(startDate.getTime() + 8*3600000);
+      var finishDeadline = sunset
+        ? new Date(sunset.getTime() - SAFETY_BUFFER_MIN*60000)
+        : new Date(startDate.getTime() + 10*3600000);
+
+      var whyParts = [];
+      if(sunset) whyParts.push("Sunset is at "+fmtClockDate(sunset)+", and PeakGuard keeps a "+SAFETY_BUFFER_MIN+"-minute buffer before dark.");
+      if(terrain && terrain.elevGain>300) whyParts.push("The route gains "+Math.round(terrain.elevGain)+" m, which slows your effective pace on the way back.");
+      if(weather && weather.worsensAt){
+        var clampedDeadline = new Date(weather.worsensAt.getTime() - 20*60000);
+        if(clampedDeadline.getTime() < decisionDeadline.getTime()){
+          decisionDeadline = clampedDeadline;
+          whyParts.push("Weather is expected to worsen around "+fmtClockDate(weather.worsensAt)+", which moves your deadline earlier.");
+        }
+      }
+      if(whyParts.length===0) whyParts.push("Based on your pace and the distance remaining after the Decision Point.");
+
+      var band = riskBand(risk);
+      var recommendation = band.cls==="high"
+        ? "This route carries high risk for your profile right now. Consider an easier route, a different day, or starting much earlier."
+        : (band.cls==="low"
+          ? "Risk is low for your profile. Stick to the plan, watch the Decision Point, and keep checking conditions."
+          : "Risk is moderate. Respect the Decision Point deadline and be ready to turn back if you fall behind pace.");
+
+      plan = {
+        distOut:distOut, distTop:distTop, distReturn:distReturn, pace:basePace,
+        risk:risk, weights:weights, parts:parts, weather:weather, terrain:terrain,
+        startAt:startDate, sunset:sunset, decisionDeadline:decisionDeadline, finishDeadline:finishDeadline,
+        decisionWhy: whyParts.join(" "), recommendation: recommendation
+      };
+      return plan;
+    });
+  }
+
+  function riskBarClass(pct){ if(pct>=66) return "high"; if(pct>=33) return "mid"; return ""; }
+  function renderRiskBreakdown(){
+    var W = plan.weights, P = plan.parts;
+    var rows = [
+      { label:"Weather", val:P.weather, max:W.weather*100 },
+      { label:"Terrain", val:P.terrain, max:W.terrain*100 },
+      { label:"Experience", val:P.experience, max:W.experience*100 },
+      { label:"Daylight", val:P.daylight, max:W.daylight*100 },
+      { label:"Battery", val:P.battery, max:W.battery*100 }
+    ];
+    el.riskBreakdownOut.innerHTML = rows.map(function(r){
+      if(r.val==null){
+        return '<div class="rb-row"><span class="rb-label">'+r.label+'</span><div class="rb-bar-track"></div><span class="rb-val na">N/A</span></div>';
+      }
+      var pct = clamp((r.val/r.max)*100,0,100);
+      return '<div class="rb-row"><span class="rb-label">'+r.label+'</span><div class="rb-bar-track"><div class="rb-bar-fill '+riskBarClass(pct)+'" style="width:'+pct+'%"></div></div><span class="rb-val">+'+r.val+'</span></div>';
+    }).join("");
+  }
+  function renderWeatherBlock(){
+    var w = plan.weather;
+    if(!w){ el.weatherGrid.hidden = true; el.weatherReasons.innerHTML = ""; el.weatherUnavailable.hidden = false; return; }
+    el.weatherUnavailable.hidden = true;
+    el.weatherGrid.hidden = false;
+    var cells = [
+      ["Temperature", Math.round(w.temp)+"°C"], ["Feels like", Math.round(w.feelsLike)+"°C"],
+      ["Rain probability", Math.round(w.maxPrecipProb)+"%"], ["Precipitation", (w.precipAmount||0).toFixed(1)+" mm"],
+      ["Wind speed", Math.round(w.maxWind)+" km/h"], ["Wind gusts", Math.round(w.maxGust)+" km/h"],
+      ["Condition", w.conditionText]
+    ];
+    if(w.visibility!=null) cells.push(["Visibility", (w.visibility/1000).toFixed(1)+" km"]);
+    el.weatherGrid.innerHTML = cells.map(function(c){ return '<div class="weather-cell"><div class="wk">'+c[0]+'</div><div class="wv">'+c[1]+'</div></div>'; }).join("");
+    el.weatherReasons.innerHTML = w.reasons.map(function(r){ return '<div class="wr-item">'+r+'</div>'; }).join("");
+  }
+  function renderTerrainBlock(){
+    var t = plan.terrain;
+    if(!t){ el.terrainGrid.hidden = true; el.elevChartWrap.hidden = true; el.terrainReasons.innerHTML = ""; el.terrainUnavailable.hidden = false; return; }
+    el.terrainUnavailable.hidden = true;
+    el.terrainGrid.hidden = false;
+    var cells = [
+      ["Distance", t.totalDist.toFixed(1)+" km"], ["Elevation gain", Math.round(t.elevGain)+" m"],
+      ["Highest point", Math.round(t.maxElev)+" m"], ["Average slope", t.avgSlopeDeg.toFixed(1)+"°"],
+      ["Steepest section", Math.round(t.steepestAbsDeg)+"°"]
+    ];
+    el.terrainGrid.innerHTML = cells.map(function(c){ return '<div class="weather-cell"><div class="wk">'+c[0]+'</div><div class="wv">'+c[1]+'</div></div>'; }).join("");
+    el.terrainReasons.innerHTML = t.reasons.map(function(r){ return '<div class="wr-item">'+r+'</div>'; }).join("");
+    el.elevChartWrap.hidden = false;
+    el.elevChartWrap.innerHTML = buildElevationSvg(t.distances, t.elevations);
+  }
+  function renderAnalysis(){
+    el.riskScoreOut.innerHTML = plan.risk + ' <span>/100</span>';
+    var band = riskBand(plan.risk);
+    el.riskBandOut.textContent = band.label;
+    el.riskBandOut.className = "band " + band.cls;
+    renderRiskBreakdown();
+    el.dcDeadline.textContent = fmtClockDate(plan.decisionDeadline);
+    el.dcWhy.textContent = plan.decisionWhy;
+    renderWeatherBlock();
+    renderTerrainBlock();
+    el.anSunset.textContent = fmtClockDate(plan.sunset);
+    el.anFinish.textContent = fmtClockDate(plan.finishDeadline);
+    el.anRecommendation.textContent = plan.recommendation;
   }
 
   function drawAnalysisLayers(){
@@ -2180,23 +2710,19 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
   el.btnAnalyze.addEventListener("click", function(){
     if(!(pts.start && pts.decision && pts.finish)) return;
-    var risk = computePlan();
-    el.riskScoreOut.innerHTML = risk + ' <span>/100</span>';
-    var band = riskBand(risk);
-    el.riskBandOut.textContent = band.label;
-    el.riskBandOut.className = "band " + band.cls;
-    el.riskWhyOut.innerHTML = [
-      ["Conditions", plan.riskParts.weather],
-      ["Pace / duration", plan.riskParts.pace],
-      ["Route length", plan.riskParts.difficulty],
-      ["Experience", plan.riskParts.experience],
-      ["Daylight", plan.riskParts.daylight]
-    ].map(function(p){ return "<span>"+p[0]+" <b>+"+p[1]+"</b></span>"; }).join("");
-    el.dcDeadline.textContent = fmtClockDate(plan.decisionDeadline);
-    el.anSunset.textContent = fmtClockDate(plan.sunset);
-    el.anFinish.textContent = fmtClockDate(plan.finishDeadline);
-    drawAnalysisLayers();
-    showAppScreen("app-analysis");
+    el.btnAnalyze.disabled = true;
+    el.btnAnalyze.textContent = "Analyzing…";
+    computePlanAsync().then(function(){
+      el.btnAnalyze.disabled = false;
+      el.btnAnalyze.textContent = "Analyze route";
+      renderAnalysis();
+      drawAnalysisLayers();
+      showAppScreen("app-analysis");
+    }).catch(function(){
+      el.btnAnalyze.disabled = false;
+      el.btnAnalyze.textContent = "Analyze route";
+      el.drawHint.innerHTML = "Couldn't complete analysis — please try again.";
+    });
   });
 
   el.btnChooseAnother.addEventListener("click", function(){ drawPlanLayers(); showAppScreen("app-plan"); });
@@ -2352,6 +2878,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
     el.stBattery.textContent = Math.round(track.battery)+"%";
     el.stPace.textContent = pace.toFixed(1)+" km/h";
 
+    var deviationKm = distanceToRouteKm(track.current);
+    track.deviationKm = deviationKm;
+    if(el.stDeviation) el.stDeviation.textContent = deviationKm < 1 ? Math.round(deviationKm*1000)+" m" : deviationKm.toFixed(2)+" km";
+    var deviationRiskBump = clamp((deviationKm - 0.15) * 60, 0, 20);
+
     if(track.phase==="out"){
       if(!track.reachedDecision && haversineKm(track.current, pts.decision) < 0.05){ track.reachedDecision = true; }
       if(track.reachedDecision && haversineKm(track.current, pts.finish) < 0.05 && !track.finished){ finishHike(now); return; }
@@ -2370,7 +2901,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
         el.dwTimeLeft.textContent = fmtCountdown(minsLeft);
 
         var paceDeficitPct = clamp(100*(1-pace/plan.pace),0,100);
-        track.liveRisk = clamp(plan.risk + paceDeficitPct*0.55, 0, 100);
+        track.liveRisk = clamp(plan.risk + paceDeficitPct*0.55 + deviationRiskBump, 0, 100);
         el.stRisk.textContent = Math.round(track.liveRisk)+"/100";
 
         var projArrivalMs = now.getTime() + (distTargetKm/pace)*3600000;
@@ -2379,7 +2910,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
       } else {
         el.dwBlock.hidden = true;
         var paceDeficitPct2 = clamp(100*(1-pace/plan.pace),0,100);
-        el.stRisk.textContent = Math.round(clamp(plan.risk*0.6+paceDeficitPct2*0.3,0,100))+"/100";
+        track.liveRisk = clamp(plan.risk*0.6+paceDeficitPct2*0.3+deviationRiskBump, 0, 100);
+        el.stRisk.textContent = Math.round(track.liveRisk)+"/100";
       }
     } else {
       var distToStart = haversineKm(track.current, pts.start);
@@ -2563,9 +3095,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
   function resetAll(){
     stopTracking();
     pts = { start:null, decision:null, finish:null };
-    exp = "medium"; cond = "clear";
-    expBtns.forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-exp")==="medium"); });
-    condBtns.forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-cond")==="clear"); });
     el.startTimeInput.value = "06:00";
     plan = null;
     el.alertPanel.hidden = true;
@@ -2576,6 +3105,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
     el.emgSentPanel.hidden = true;
     el.trackBadge.classList.remove("offline");
     el.trackBadge.innerHTML = '<span class="dot"></span>Tracking';
+    if(el.locSearchInput) el.locSearchInput.value = "";
+    if(el.locSearchResults) el.locSearchResults.classList.remove("show");
     if(appMap){ clearTrail(appMap); }
     updateRoutePointsUI();
     drawPlanLayers();
@@ -2583,7 +3114,13 @@ svg.leaflet-image-layer.leaflet-interactive path {
   }
   function openApp(){
     el.appOverlay.hidden = false;
-    resetAll();
+    if(profile){
+      updateProfileChip();
+      resetAll();
+    } else {
+      fillRegForm(null);
+      showAppScreen("app-register");
+    }
     setTimeout(function(){ ensureMap().invalidateSize(); }, 60);
     setTimeout(function(){ ensureMap().invalidateSize(); }, 250);
   }
