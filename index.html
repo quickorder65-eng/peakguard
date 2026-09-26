@@ -1,0 +1,1665 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="PeakGuard — proactive mountain safety. Predicts risk before it happens, guides you to a safe decision point, works fully offline.">
+<title>PeakGuard</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Noto+Sans:wght@400;600;700&family=PT+Mono:wght@400;700&display=swap">
+<style>
+  :root{
+    color-scheme: light;
+    --paper: #f6f4ee;
+    --paper-deep: #ece7db;
+    --panel: #e2e6e2;
+    --panel-line: #CCD3D9;
+    --ink: #002917;
+    --ink-soft: #21402d;
+    --brand: #005C34;
+    --brand-deep: #00341d;
+    --brand-tint: #dbe8e0;
+    --sage: #63796f;
+    --sage-line: #859E97;
+    --stone: #5c5f63;
+    --stone-line: #797D81;
+    --amber: #a8742f;
+    --amber-tint: #f0e2cd;
+    --alert: #a94f2c;
+    --alert-tint: #f1ded2;
+    --line: rgba(0,41,23,0.15);
+    --screen-bg: #00220f;
+    --screen-ink: #eef2ee;
+    --font-display: 'Unbounded', 'Arial Rounded MT Bold', sans-serif;
+    --font-body: 'Noto Sans', -apple-system, Segoe UI, sans-serif;
+    --font-mono: 'PT Mono', 'SFMono-Regular', monospace;
+  }
+
+  *{ box-sizing:border-box; }
+  body{
+    background:var(--paper);
+    color:var(--ink-soft);
+    font-family:var(--font-body);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  img,svg{ max-width:100%; }
+  ::selection{ background:var(--brand); color:var(--paper); }
+
+  h1,h2,h3{
+    font-family:var(--font-display);
+    color:var(--ink);
+    font-weight:700;
+    letter-spacing:-0.01em;
+    line-height:1.15;
+    text-wrap:balance;
+    margin:0;
+  }
+  p{ margin:0; }
+  a{ color:var(--brand-deep); }
+
+  .wrap{ max-width:920px; margin:0 auto; padding-inline:20px; }
+
+  /* ---------- reveal-on-scroll ---------- */
+  .reveal{ opacity:0; transform:translateY(16px); transition:opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.in-view{ opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce){ .reveal{ opacity:1; transform:none; transition:none; } }
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    position:sticky;
+    top:env(safe-area-inset-top,0px);
+    z-index:20;
+    background:rgba(246,244,238,0.9);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar-inner{
+    max-width:920px; margin:0 auto; padding:14px 20px;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+  }
+  .wordmark{ font-family:var(--font-mono); font-weight:700; letter-spacing:0.1em; font-size:13px; color:var(--ink); }
+  .wordmark b{ color:var(--brand); font-weight:700; }
+
+  .btn{
+    font-family:var(--font-body); font-weight:700; font-size:13.5px;
+    border:none; border-radius:4px; cursor:pointer;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .btn-primary{ background:var(--brand); color:var(--paper); padding:12px 22px; }
+  .btn-primary:hover{ background:var(--brand-deep); }
+  .btn-small{ background:var(--brand); color:var(--paper); padding:8px 14px; font-size:12.5px; white-space:nowrap; }
+  .btn-small:hover{ background:var(--brand-deep); }
+  .btn-ghost{ background:transparent; color:var(--ink); border:1px solid var(--stone-line); padding:11px 20px; }
+  .btn-ghost:hover{ background:var(--panel); }
+  .btn-row{ display:flex; flex-wrap:wrap; gap:12px; margin-top:26px; }
+
+  /* ---------- app demo (full product interface) ---------- */
+  .app-overlay{
+    position:fixed; inset:0; z-index:100;
+    background:rgba(0,20,11,0.62);
+    display:flex; align-items:center; justify-content:center;
+    padding:26px;
+  }
+  .app-overlay[hidden]{ display:none !important; }
+  @media (max-width:760px){ .app-overlay{ padding:0; } }
+
+  .app-shell{
+    width:min(94vw, 1240px);
+    height:min(88vh, 900px);
+    background:var(--paper);
+    border-radius:18px;
+    border:1px solid var(--stone-line);
+    box-shadow:0 40px 100px -30px rgba(0,20,11,0.55);
+    display:flex; flex-direction:column;
+    overflow:hidden;
+  }
+  @media (max-width:760px){
+    .app-shell{ width:100vw; height:100vh; height:100dvh; border-radius:0; border:none; }
+  }
+
+  .app-topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 20px; border-bottom:1px solid var(--line); background:var(--panel); flex:none;
+  }
+  .app-step{ font-family:var(--font-mono); font-size:11px; letter-spacing:0.08em; color:var(--stone); text-transform:uppercase; }
+  .app-close{
+    width:32px; height:32px; border-radius:50%; border:1px solid var(--stone-line); background:var(--paper);
+    color:var(--ink); font-size:16px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; flex:none;
+  }
+
+  .app-body{ flex:1; overflow:hidden; position:relative; }
+  .app-screen{ position:absolute; inset:0; display:flex; overflow:hidden; }
+  .app-screen[hidden]{ display:none !important; }
+
+  .app-cols{ display:flex; width:100%; height:100%; }
+  .app-side{
+    width:400px; flex:none; padding:28px 28px 24px; overflow-y:auto; background:var(--paper);
+    border-right:1px solid var(--line);
+  }
+  .app-map-wrap{ flex:1; position:relative; background:var(--screen-bg); overflow:hidden; }
+  .app-map-wrap svg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+
+  @media (max-width:860px){
+    .app-cols{ flex-direction:column; }
+    .app-cols .app-side{ width:100%; height:45%; border-right:none; border-top:1px solid var(--line); order:2; padding:20px 18px; }
+    .app-cols .app-map-wrap{ height:55%; order:1; }
+  }
+
+  .app-h1{ font-family:var(--font-display); font-size:clamp(20px,2.6vw,25px); color:var(--ink); }
+  .app-p{ margin-top:8px; font-size:13.5px; color:var(--ink-soft); line-height:1.5; }
+  .app-label{ font-family:var(--font-mono); font-size:11px; letter-spacing:0.07em; text-transform:uppercase; color:var(--sage); margin-top:22px; display:block; }
+
+  .route-pick{ margin-top:12px; display:flex; flex-direction:column; gap:8px; }
+  .route-opt{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    border:1px solid var(--line); border-radius:10px; padding:12px 14px; cursor:pointer; background:var(--panel);
+    transition:border-color 0.15s ease, background 0.15s ease;
+  }
+  .route-opt.active{ border-color:var(--brand); background:var(--brand-tint); }
+  .route-opt .rp-name{ font-weight:700; color:var(--ink); font-size:14px; }
+  .route-opt .rp-meta{ font-family:var(--font-mono); font-size:11px; color:var(--stone); margin-top:3px; }
+  .route-opt .rp-diff{
+    font-family:var(--font-mono); font-size:10px; letter-spacing:0.05em; text-transform:uppercase;
+    padding:3px 8px; border-radius:2px; background:var(--paper); color:var(--stone); border:1px solid var(--stone-line); white-space:nowrap;
+  }
+
+  .seg-row{ display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
+  .seg-btn{
+    font-family:var(--font-mono); font-size:11.5px; padding:7px 12px; border-radius:999px;
+    border:1px solid var(--stone-line); background:transparent; color:var(--ink-soft); cursor:pointer;
+  }
+  .seg-btn.active{ background:var(--brand); border-color:var(--brand); color:var(--paper); }
+
+  .field-row{ margin-top:14px; }
+  .field-row label{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.06em; text-transform:uppercase; color:var(--stone); }
+  .field-row input[type=time]{
+    display:block; margin-top:6px; width:100%; padding:9px 10px; border-radius:6px; border:1px solid var(--stone-line);
+    background:var(--paper); font-family:var(--font-mono); font-size:14px; color:var(--ink);
+  }
+  .field-static{
+    display:flex; justify-content:space-between; align-items:center; margin-top:6px;
+    padding:9px 10px; border-radius:6px; background:var(--panel); font-family:var(--font-mono); font-size:13px; color:var(--ink);
+  }
+  .weather-chip{
+    display:inline-flex; align-items:center; gap:6px; margin-top:6px;
+    font-family:var(--font-mono); font-size:12px; color:var(--ink-soft); background:var(--panel);
+    border:1px solid var(--line); border-radius:999px; padding:6px 12px;
+  }
+
+  .app-btn{
+    width:100%; margin-top:22px; padding:13px; border-radius:8px; border:none;
+    font-family:var(--font-body); font-weight:700; font-size:14.5px; cursor:pointer;
+    background:var(--brand); color:var(--paper);
+  }
+  .app-btn:hover{ background:var(--brand-deep); }
+  .app-btn:disabled{ opacity:0.4; cursor:not-allowed; }
+  .app-btn.ghost{ background:transparent; border:1px solid var(--stone-line); color:var(--ink); margin-top:10px; }
+  .app-btn.danger{ background:var(--alert); }
+
+  .app-link-btn{
+    display:block; margin-top:14px; background:none; border:none; padding:0;
+    font-family:var(--font-mono); font-size:11.5px; color:var(--stone); text-decoration:underline; cursor:pointer;
+  }
+
+  .map-pt-label{ font-family:'PT Mono',monospace; font-size:11px; fill:#9fb0a6; }
+  .map-current{ animation:mapPulse2 2.2s ease-in-out infinite; }
+  @keyframes mapPulse2{ 0%,100%{ opacity:1; } 50%{ opacity:0.5; } }
+  @media (prefers-reduced-motion: reduce){ .map-current{ animation:none; } }
+
+  .map-badge{
+    position:absolute; top:16px; left:16px; font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.06em;
+    color:#c7d4cd; background:rgba(0,0,0,0.32); border:1px solid #2a4a38; border-radius:999px; padding:6px 12px;
+    display:flex; align-items:center; gap:7px; text-transform:uppercase;
+  }
+  .map-badge .dot{ width:6px; height:6px; border-radius:50%; background:#5fbf85; }
+  .map-badge.offline .dot{ background:#c07a4a; }
+  .map-badge[hidden]{ display:none !important; }
+
+  .map-overlay-panel{
+    position:absolute; right:16px; top:16px; bottom:16px; width:270px; overflow-y:auto; padding-right:2px; z-index:3;
+  }
+  @media (max-width:1000px){ .map-overlay-panel{ position:relative; z-index:2; width:auto; margin:54px 14px 14px; bottom:auto; right:auto; top:auto; } }
+
+  .stat-grid{ display:grid; grid-template-columns:1fr 1fr; margin-top:0; background:rgba(0,0,0,0.32); border:1px solid #2a4a38; border-radius:10px; overflow:hidden; }
+  .stat-cell{ padding:12px 14px; border-right:1px solid #1c3626; border-bottom:1px solid #1c3626; }
+  .stat-cell:nth-child(2n){ border-right:none; }
+  .stat-cell:nth-last-child(-n+2){ border-bottom:none; }
+  .stat-cell .sk{ font-family:var(--font-mono); font-size:9.5px; letter-spacing:0.05em; text-transform:uppercase; color:#8ba192; }
+  .stat-cell .sv{ font-family:var(--font-mono); font-size:16px; color:#eef2ee; font-weight:700; margin-top:3px; }
+
+  .decision-window{
+    margin-top:12px; background:rgba(0,0,0,0.34); border:1px solid #2a4a38; border-radius:12px; padding:16px 18px;
+  }
+  .decision-window .dw-label{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.08em; color:#e8c99a; text-transform:uppercase; }
+  .decision-window .dw-time{ font-family:var(--font-mono); font-size:32px; color:#eef2ee; margin-top:4px; font-variant-numeric:tabular-nums; }
+  .decision-window .dw-sub{ display:flex; justify-content:space-between; margin-top:8px; font-family:var(--font-mono); font-size:11px; color:#8ba192; }
+
+  .offline-status{ margin-top:12px; background:rgba(0,0,0,0.34); border:1px solid #2a4a38; border-radius:10px; padding:12px 14px; }
+  .offline-status[hidden]{ display:none !important; }
+  .offline-status .os-row{ display:flex; align-items:center; justify-content:space-between; padding:5px 0; font-size:11.5px; }
+  .offline-status .os-row .sname{ display:flex; align-items:center; color:#c7d4cd; }
+  .offline-status .os-dot{ width:6px; height:6px; border-radius:50%; background:#5fbf85; display:inline-block; margin-right:7px; }
+  .offline-status .os-val{ font-family:var(--font-mono); font-size:10px; color:#5fbf85; letter-spacing:0.05em; text-transform:uppercase; }
+  .offline-status .os-weather{ margin-top:6px; font-family:var(--font-mono); font-size:10px; color:#8ba192; }
+
+  .risk-hero{ display:flex; align-items:baseline; gap:10px; margin-top:8px; }
+  .risk-hero .num{ font-family:var(--font-display); font-size:44px; color:var(--ink); line-height:1; }
+  .risk-hero .num span{ font-size:0.42em; color:var(--stone); font-family:var(--font-body); font-weight:700; }
+  .risk-hero .band{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase;
+    padding:5px 10px; border-radius:2px; background:var(--amber-tint); color:var(--amber);
+  }
+  .risk-hero .band.low{ background:var(--brand-tint); color:var(--brand-deep); }
+  .risk-hero .band.high{ background:var(--alert-tint); color:var(--alert); }
+  .risk-why{ margin-top:14px; display:flex; flex-wrap:wrap; gap:7px; }
+  .risk-why span{
+    font-family:var(--font-mono); font-size:11px; color:var(--ink-soft); background:var(--panel);
+    border:1px solid var(--line); border-radius:999px; padding:5px 10px;
+  }
+  .risk-why span b{ color:var(--ink); }
+
+  .decision-card{ margin-top:18px; background:var(--brand-deep); border-radius:10px; padding:16px 18px; color:var(--paper); }
+  .decision-card .dc-label{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.08em; color:#9fc4b0; text-transform:uppercase; }
+  .decision-card .dc-time{ font-family:var(--font-mono); font-size:26px; margin-top:4px; }
+  .decision-card .dc-note{ margin-top:8px; font-size:12.5px; color:#cfe3d7; line-height:1.45; }
+
+  .mini-kv-row{ display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--line); font-size:13px; color:var(--ink-soft); }
+  .mini-kv-row:last-child{ border-bottom:none; }
+  .mini-kv-row .v{ font-family:var(--font-mono); font-weight:700; color:var(--ink); }
+
+  .float-panel{
+    position:absolute; right:0; top:0; bottom:0; width:360px; max-width:92vw; z-index:5;
+    background:var(--paper); border-left:1px solid var(--line); padding:26px 26px 22px; overflow-y:auto;
+    box-shadow:-20px 0 40px -30px rgba(0,0,0,0.4);
+  }
+  .float-panel[hidden]{ display:none !important; }
+  @media (max-width:860px){ .float-panel{ left:0; width:auto; border-left:none; } }
+
+  .risk-shift{ display:flex; align-items:baseline; gap:10px; margin-top:8px; }
+  .risk-shift .from{ font-family:var(--font-display); font-size:24px; color:var(--stone); text-decoration:line-through; }
+  .risk-shift .arrow{ color:var(--stone-line); font-size:18px; }
+  .risk-shift .to{ font-family:var(--font-display); font-size:38px; color:var(--alert); }
+  .risk-shift.good .to{ color:var(--brand); }
+
+  .recommend{ margin-top:18px; background:var(--alert-tint); border-radius:10px; padding:14px 16px; }
+  .recommend .rl{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.07em; text-transform:uppercase; color:var(--alert); }
+  .recommend .rt{ font-family:var(--font-display); font-size:18px; color:var(--ink); margin-top:4px; }
+
+  .return-badge{ display:inline-flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.06em; text-transform:uppercase; color:var(--brand); background:var(--brand-tint); border-radius:999px; padding:6px 13px; }
+  .return-badge::before{ content:''; width:7px; height:7px; border-radius:50%; background:var(--brand); }
+
+  .emg-kicker{ font-family:var(--font-mono); font-size:11px; letter-spacing:0.09em; color:var(--alert); text-transform:uppercase; display:flex; align-items:center; gap:7px; }
+  .emg-kicker::before{ content:''; width:7px; height:7px; border-radius:50%; background:var(--alert); }
+  .emg-ok{ font-family:var(--font-mono); font-size:11px; letter-spacing:0.08em; color:var(--brand); text-transform:uppercase; display:flex; align-items:center; gap:7px; }
+  .emg-ok::before{ content:''; width:7px; height:7px; border-radius:50%; background:var(--brand); }
+  .emg-panel[hidden], .emg-sent[hidden]{ display:none !important; }
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    padding-block:52px 40px;
+    background:var(--paper-deep);
+    border-bottom:1px solid var(--line);
+  }
+  .contour-bg{ position:absolute; inset:0; width:100%; height:100%; opacity:0.55; }
+  .hero-inner{ position:relative; z-index:1; }
+
+  .coords{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.03em; color:var(--sage); }
+  .eyebrow{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:0.14em; color:var(--alert);
+    text-transform:uppercase; display:flex; align-items:center; gap:8px; margin-top:16px;
+  }
+  .eyebrow::before{ content:''; width:7px; height:7px; background:var(--alert); border-radius:50%; display:inline-block; }
+  .hero h1{ font-size:clamp(38px,8vw,62px); line-height:1.02; margin-top:14px; }
+  .hero-tagline{ font-family:var(--font-display); font-weight:600; font-size:clamp(19px,3vw,24px); color:var(--brand-deep); margin-top:14px; max-width:16ch; line-height:1.28; }
+  .hero-sub{ margin-top:16px; font-size:16.5px; color:var(--ink-soft); max-width:50ch; }
+  .hero-grid{ margin-top:36px; display:grid; grid-template-columns:1fr 1fr; gap:30px; align-items:center; }
+  @media (max-width:760px){ .hero-grid{ grid-template-columns:1fr; } }
+
+  .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:22px; }
+  .chip{
+    font-family:var(--font-mono); font-size:12px; padding:6px 12px;
+    border:1px solid var(--stone-line); border-radius:2px; color:var(--sage); background:rgba(246,244,238,0.6);
+  }
+
+  /* ---------- shared route-map + decision panel ---------- */
+  .map-panel{ background:var(--screen-bg); border-radius:14px; padding:16px; }
+  .map-head{ display:flex; align-items:center; justify-content:space-between; }
+  .map-label{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.08em; color:#8ba192; text-transform:uppercase; }
+  .map-live{ font-family:var(--font-mono); font-size:10px; letter-spacing:0.06em; color:#5fbf85; display:flex; align-items:center; gap:5px; }
+  .map-live::before{ content:''; width:6px; height:6px; border-radius:50%; background:#5fbf85; }
+  .map-pt-label{ font-family:'PT Mono',monospace; font-size:9px; fill:#9fb0a6; }
+  .map-current{ animation:mapPulse 2.2s ease-in-out infinite; transform-origin:center; }
+  @keyframes mapPulse{ 0%,100%{ opacity:1; } 50%{ opacity:0.55; } }
+  @media (prefers-reduced-motion: reduce){ .map-current{ animation:none; } }
+  .map-svg{ margin-top:10px; display:block; }
+
+  .dp-row{ display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid #1c3626; font-size:13.5px; }
+  .dp-row:last-child{ border-bottom:none; }
+  .dp-row .k{ color:#8ba192; }
+  .dp-row .v{ font-family:var(--font-mono); color:var(--screen-ink); font-weight:700; transition:color 0.3s ease; }
+  .dp-row .v.bump{ color:#e2a883; }
+
+  /* ---------- sections ---------- */
+  section{ padding-block:56px; border-bottom:1px solid var(--line); }
+  .kicker{ font-family:var(--font-mono); font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:var(--sage); }
+  h2{ font-size:clamp(23px,4vw,32px); margin-top:10px; max-width:22ch; }
+  .lead{ margin-top:14px; font-size:16.5px; color:var(--ink-soft); max-width:60ch; }
+
+  blockquote{
+    margin:26px 0 0; padding:18px 20px; border-left:3px solid var(--brand);
+    background:var(--panel); border-radius:0 6px 6px 0; font-size:16.5px; color:var(--ink); font-style:italic;
+  }
+
+  /* problem: gradual drift row */
+  .drift{ margin-top:30px; display:flex; flex-wrap:wrap; align-items:center; gap:0; }
+  .drift-item{
+    font-family:var(--font-mono); font-size:12px; color:var(--ink-soft); background:var(--panel);
+    border:1px solid var(--line); border-radius:999px; padding:9px 14px; white-space:nowrap;
+  }
+  .drift-arrow{ color:var(--stone-line); font-size:15px; padding:0 8px; flex:none; }
+  @media (max-width:700px){
+    .drift{ flex-direction:column; align-items:flex-start; gap:0; }
+    .drift-item{ white-space:normal; }
+    .drift-arrow{ display:block; padding:4px 0 4px 8px; }
+  }
+
+  /* how it works: connected flow */
+  .flow{ margin-top:34px; display:flex; gap:22px; }
+  .flow-step{ flex:1; position:relative; }
+  .flow-step:not(:last-child)::after{ content:''; position:absolute; top:17px; left:100%; width:22px; height:1px; background:var(--stone-line); }
+  .flow-num{
+    width:34px; height:34px; border-radius:50%; background:var(--brand); color:var(--paper);
+    font-family:var(--font-mono); font-size:13px; display:flex; align-items:center; justify-content:center;
+  }
+  .flow-step h3{ font-family:var(--font-body); font-size:15px; font-weight:700; color:var(--ink); margin-top:12px; letter-spacing:0.03em; text-transform:uppercase; }
+  .flow-step p{ margin-top:7px; font-size:13.5px; color:var(--ink-soft); }
+  @media (max-width:780px){
+    .flow{ flex-direction:column; gap:24px; }
+    .flow-step:not(:last-child)::after{ display:none; }
+  }
+
+  .alert-stack{ margin-top:18px; background:var(--screen-bg); border-radius:10px; padding:15px 17px; display:flex; flex-direction:column; gap:9px; }
+  .alert-stack .a-line{ font-family:var(--font-mono); font-size:12.5px; color:var(--screen-ink); line-height:1.5; }
+  .alert-stack .a-line b{ color:#e2a883; }
+
+  /* decision point section */
+  .dp-grid{ margin-top:32px; display:grid; grid-template-columns:1.05fr 1fr; gap:28px; align-items:start; }
+  @media (max-width:780px){ .dp-grid{ grid-template-columns:1fr; } }
+  .dp-shift-row{ display:flex; align-items:center; gap:12px; margin-top:16px; flex-wrap:wrap; }
+  .dp-shift-note{ font-family:var(--font-mono); font-size:12px; color:#8ba192; min-height:1.4em; }
+  .dp-shift-note del{ color:#7a8f83; text-decoration:line-through; }
+  .dp-shift-note b{ color:#e2a883; }
+  .dp-closing{ margin-top:22px; font-family:var(--font-display); font-size:clamp(17px,2.4vw,20px); color:var(--brand-deep); max-width:44ch; line-height:1.35; }
+
+  /* dynamic risk score */
+  .score-row{ margin-top:28px; display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; }
+  .score-num{ font-family:var(--font-display); font-size:clamp(48px,9vw,72px); color:var(--ink); line-height:1; }
+  .score-num span{ font-size:0.4em; color:var(--stone); font-family:var(--font-body); font-weight:700; }
+  .score-band{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:0.06em; text-transform:uppercase;
+    padding:6px 12px; border-radius:2px; background:var(--amber-tint); color:var(--amber);
+  }
+  .factor-list{ margin-top:22px; display:flex; flex-direction:column; }
+  .factor-row{ display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-bottom:1px solid var(--line); font-size:14.5px; color:var(--ink-soft); }
+  .factor-row:last-child{ border-bottom:none; }
+  .factor-row .fname{ display:flex; align-items:center; gap:11px; }
+  .factor-row .fdot{ width:11px; height:11px; border-radius:2px; flex:none; }
+  .factor-row .fval{ font-family:var(--font-mono); font-weight:700; color:var(--ink); }
+
+  /* offline-first */
+  .offline-grid{ margin-top:32px; display:grid; grid-template-columns:220px 1fr; gap:34px; align-items:center; }
+  @media (max-width:640px){ .offline-grid{ grid-template-columns:1fr; } }
+  .phone{
+    justify-self:start; width:210px;
+    border:1px solid var(--stone-line); border-radius:22px; padding:12px;
+    background:linear-gradient(180deg,#fbfaf6,var(--panel-line));
+    box-shadow:0 24px 46px -28px rgba(0,41,23,0.45);
+  }
+  @media (max-width:640px){ .phone{ justify-self:center; } }
+  .phone-screen{ background:var(--screen-bg); border-radius:12px; padding:15px 13px; }
+  .phone-nosignal{ display:flex; align-items:center; justify-content:space-between; }
+  .phone-label{ font-family:var(--font-mono); font-size:10px; letter-spacing:0.08em; color:var(--sage-line); text-transform:uppercase; }
+  .phone-signal{ font-family:var(--font-mono); font-size:10px; letter-spacing:0.05em; color:#c07a4a; }
+  .phone-time{ font-family:var(--font-mono); font-size:26px; color:var(--screen-ink); margin-top:6px; font-variant-numeric:tabular-nums; }
+  .status-list{ margin-top:14px; display:flex; flex-direction:column; }
+  .status-row{ display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid #17301f; font-size:12px; }
+  .status-row:last-child{ border-bottom:none; }
+  .status-row .sname{ display:flex; align-items:center; color:#c7d4cd; }
+  .status-dot{ width:7px; height:7px; border-radius:50%; background:#5fbf85; display:inline-block; margin-right:8px; box-shadow:0 0 0 3px rgba(95,191,133,0.18); flex:none; }
+  .status-val{ font-family:var(--font-mono); font-size:10px; color:#5fbf85; letter-spacing:0.05em; text-transform:uppercase; }
+  .offline-note{ margin-top:12px; font-family:var(--font-mono); font-size:10.5px; color:#8ba192; }
+
+  /* real hike scenario timeline */
+  .timeline{ margin-top:34px; display:flex; flex-direction:column; }
+  .tl-step{ display:grid; grid-template-columns:38px 1fr; gap:16px; padding-block:16px; position:relative; }
+  .tl-step:not(:last-child)::before{ content:''; position:absolute; left:18px; top:44px; bottom:-4px; width:1px; background:var(--stone-line); }
+  .tl-dot{
+    width:38px; height:38px; border-radius:50%; background:var(--paper); border:1px solid var(--stone-line);
+    display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:11.5px; color:var(--stone); z-index:1; text-align:center;
+  }
+  .tl-step.alt .tl-dot{ border-color:var(--alert); color:var(--alert); background:var(--alert-tint); }
+  .tl-step.good .tl-dot{ border-color:var(--brand); color:var(--brand); background:var(--brand-tint); }
+  .tl-time{ font-family:var(--font-mono); font-size:11px; color:var(--stone); }
+  .tl-title{ font-weight:700; color:var(--ink); font-size:15.5px; margin-top:2px; }
+  .tl-body{ font-size:13.5px; color:var(--ink-soft); margin-top:4px; max-width:56ch; }
+  .tl-risk{ font-family:var(--font-mono); font-size:11px; color:var(--stone); margin-top:6px; }
+  .tl-risk b{ color:var(--ink); }
+
+  .never-happened{
+    margin-top:36px; text-align:center; padding:34px 20px; background:var(--brand-tint); border-radius:12px;
+  }
+  .never-happened p{
+    font-family:var(--font-display); font-weight:700; font-size:clamp(22px,4.5vw,32px); color:var(--brand-deep);
+  }
+
+  /* emergency mode: intentionally quiet */
+  .section-quiet{ padding-block:38px; }
+  .section-quiet .kicker{ color:var(--stone); }
+  .section-quiet h2{ font-size:clamp(19px,2.8vw,22px); font-family:var(--font-body); font-weight:700; color:var(--ink); max-width:none; }
+  .section-quiet .lead{ font-size:14.5px; max-width:58ch; }
+  .tag-row{ margin-top:16px; display:flex; flex-wrap:wrap; gap:8px; }
+  .tag-row span{ font-family:var(--font-mono); font-size:11.5px; color:var(--stone); background:var(--panel); border:1px solid var(--line); border-radius:3px; padding:5px 10px; }
+
+  /* rescue dashboard */
+  .dash{ margin-top:32px; background:var(--screen-bg); border-radius:12px; overflow:hidden; border:1px solid #16301f; display:grid; grid-template-columns:1.5fr 1fr; }
+  @media (max-width:760px){ .dash{ grid-template-columns:1fr; } }
+  .dash-map{ padding:18px; }
+  .dash-side{ padding:18px 20px; border-left:1px solid #16301f; }
+  @media (max-width:760px){ .dash-side{ border-left:none; border-top:1px solid #16301f; } }
+  .dash-note{ margin-top:22px; font-size:13.5px; color:var(--ink-soft); max-width:56ch; }
+  .dash-note b{ color:var(--ink); }
+
+  /* collective safety data */
+  .hazard-row{ margin-top:16px; display:flex; flex-wrap:wrap; gap:9px; }
+  .hazard-chip{
+    font-family:var(--font-mono); font-size:12px; padding:8px 14px; border-radius:999px;
+    border:1px solid var(--stone-line); color:var(--ink-soft); background:var(--paper); cursor:pointer;
+    transition:background 0.15s ease,color 0.15s ease,border-color 0.15s ease;
+  }
+  .hazard-chip:hover{ border-color:var(--brand); }
+  .hazard-chip.picked{ background:var(--brand); border-color:var(--brand); color:var(--paper); }
+  .hazard-note{ margin-top:14px; font-size:13.5px; color:var(--stone); }
+
+  /* final cta */
+  .final{ background:var(--brand-deep); border-bottom:none; text-align:center; }
+  .final .kicker{ color:var(--sage-line); }
+  .final h2{ color:var(--paper); font-size:clamp(28px,5.5vw,44px); max-width:16ch; margin-inline:auto; }
+  .final .lead{ color:#c9dad0; margin-inline:auto; }
+  .final .btn-row{ justify-content:center; }
+  .final-mark{ margin-top:44px; font-family:var(--font-mono); font-weight:700; letter-spacing:0.16em; font-size:13px; color:#8fb39d; }
+
+  footer{ padding-block:26px calc(26px + env(safe-area-inset-bottom,0px)); text-align:center; background:var(--paper-deep); }
+  footer p{ font-family:var(--font-mono); font-size:11.5px; color:var(--stone); letter-spacing:0.04em; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="wordmark">PEAK<b>GUARD</b></div>
+    <button class="btn btn-small" id="openDemoTop" type="button">Try PeakGuard</button>
+  </div>
+</div>
+
+<header class="hero">
+  <svg class="contour-bg" viewBox="0 0 900 400" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,50 C150,25 300,75 450,50 C600,25 750,75 900,50" fill="none" stroke="#859E97" stroke-width="1.4" opacity="0.55"/>
+    <path d="M0,95 C160,130 320,65 480,95 C640,125 800,65 900,90" fill="none" stroke="#859E97" stroke-width="1.4" opacity="0.48"/>
+    <path d="M0,142 C140,102 300,178 450,142 C600,106 760,178 900,144" fill="none" stroke="#797D81" stroke-width="1.4" opacity="0.42"/>
+    <path d="M0,190 C170,222 330,158 480,190 C630,220 790,160 900,188" fill="none" stroke="#797D81" stroke-width="1.4" opacity="0.36"/>
+    <path d="M0,240 C150,198 300,282 450,240 C600,200 750,280 900,238" fill="none" stroke="#859E97" stroke-width="1.4" opacity="0.3"/>
+    <path d="M0,290 C160,326 320,256 480,290 C640,322 800,258 900,288" fill="none" stroke="#797D81" stroke-width="1.4" opacity="0.24"/>
+    <path d="M0,340 C150,308 300,372 450,340 C600,310 750,370 900,338" fill="none" stroke="#859E97" stroke-width="1.4" opacity="0.18"/>
+  </svg>
+  <div class="wrap hero-inner">
+    <div class="coords">43°21′44″N · 77°04′12″E — CONTOUR INTERVAL 40M</div>
+    <div class="eyebrow">Decision Point Engine</div>
+    <h1>PeakGuard</h1>
+    <p class="hero-tagline">Know when to turn back — before it becomes an emergency.</p>
+    <p class="hero-sub">PeakGuard analyzes your route, pace, weather, daylight and personal experience to warn you before a hike becomes dangerous.</p>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="openDemoHero" type="button">Try PeakGuard</button>
+      <button class="btn btn-ghost" id="btnHow" type="button">See how it works</button>
+    </div>
+
+    <div class="chips">
+      <span class="chip">Offline-first</span>
+      <span class="chip">Explainable risk score</span>
+      <span class="chip">Proactive, not reactive</span>
+    </div>
+
+    <div class="hero-grid" style="margin-top:34px;">
+      <div></div>
+      <div class="map-panel reveal">
+        <div class="map-head">
+          <span class="map-label">Route Monitor</span>
+          <span class="map-live">Tracking</span>
+        </div>
+        <svg class="map-svg" viewBox="0 0 320 168" role="img" aria-label="Route map showing current position and the Decision Point ahead">
+          <path d="M26,146 C55,128 78,118 96,104" fill="none" stroke="#005C34" stroke-width="3" stroke-linecap="round"/>
+          <path d="M96,104 C118,92 150,80 176,66" fill="none" stroke="#797D81" stroke-width="2" stroke-dasharray="4 4"/>
+          <path d="M176,66 C200,54 218,46 236,34" fill="none" stroke="#797D81" stroke-width="2" stroke-dasharray="4 4"/>
+          <path d="M176,66 C210,82 250,96 282,116" fill="none" stroke="#859E97" stroke-width="1.6" stroke-dasharray="3 4" opacity="0.8"/>
+          <circle cx="26" cy="146" r="4" fill="#eef2ee" stroke="#797D81" stroke-width="1.5"/>
+          <circle class="map-current" cx="96" cy="104" r="6" fill="#eef2ee" stroke="#005C34" stroke-width="2.5"/>
+          <path d="M176,66 l6,-9 l6,9 l-6,9 z" fill="#f0e2cd" stroke="#a8742f" stroke-width="1.5"/>
+          <path d="M236,34 l7,-11 l7,11 l-7,7 z" fill="#eef2ee" stroke="#797D81" stroke-width="1.5"/>
+          <circle cx="282" cy="116" r="4" fill="#eef2ee" stroke="#859E97" stroke-width="1.5"/>
+          <text x="96" y="94" class="map-pt-label" text-anchor="middle">CURRENT</text>
+          <text x="176" y="52" class="map-pt-label" text-anchor="middle">DECISION PT</text>
+        </svg>
+        <div class="dp-panel" style="margin-top:6px;">
+          <div class="dp-row"><span class="k">Risk Score</span><span class="v">42 / 100 · Moderate</span></div>
+          <div class="dp-row"><span class="k">Decision Point in</span><span class="v">1:24:10</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="app-overlay" id="appOverlay" hidden>
+  <div class="app-shell">
+    <div class="app-topbar">
+      <div class="wordmark">PEAK<b>GUARD</b></div>
+      <span class="app-step" id="appStepLabel">Plan your hike</span>
+      <button class="app-close" id="appClose" type="button" aria-label="Close">✕</button>
+    </div>
+
+    <div class="app-body">
+
+      <!-- SCREEN 1 — PLAN -->
+      <div class="app-screen" id="app-plan">
+        <div class="app-cols">
+          <div class="app-side">
+            <div class="app-h1">Plan your hike</div>
+
+            <span class="app-label">Route</span>
+            <div class="route-pick" id="routePick">
+              <div class="route-opt" data-route="tribratya">
+                <div>
+                  <div class="rp-name">Three Brothers Pass</div>
+                  <div class="rp-meta">12 km · +850 m · ≈ 8h 20m</div>
+                </div>
+                <span class="rp-diff">Moderate</span>
+              </div>
+              <div class="route-opt" data-route="kokzhaylau">
+                <div>
+                  <div class="rp-name">Kok-Zhailau Trail</div>
+                  <div class="rp-meta">8 km · +420 m · ≈ 4h 50m</div>
+                </div>
+                <span class="rp-diff">Easy</span>
+              </div>
+              <div class="route-opt" data-route="furmanov">
+                <div>
+                  <div class="rp-name">Furmanov Peak</div>
+                  <div class="rp-meta">16 km · +1200 m · ≈ 11h 10m</div>
+                </div>
+                <span class="rp-diff">Hard</span>
+              </div>
+            </div>
+
+            <span class="app-label">Your experience</span>
+            <div class="seg-row" id="expRow">
+              <button class="seg-btn" data-exp="novice" type="button">Beginner</button>
+              <button class="seg-btn active" data-exp="medium" type="button">Intermediate</button>
+              <button class="seg-btn" data-exp="expert" type="button">Experienced</button>
+            </div>
+
+            <div class="field-row">
+              <label for="startTimeInput">Start time</label>
+              <input type="time" id="startTimeInput" value="06:00">
+            </div>
+
+            <div class="field-row">
+              <label>Expected duration</label>
+              <div class="field-static"><span>Ascent + descent, at your pace</span><span id="planDurationOut">—</span></div>
+            </div>
+
+            <div class="field-row">
+              <label>Weather</label>
+              <div class="weather-chip" id="planWeatherOut">—</div>
+            </div>
+
+            <button class="app-btn" id="btnAnalyze" disabled type="button">Analyze route</button>
+          </div>
+          <div class="app-map-wrap">
+            <span class="map-badge"><span class="dot"></span>Route preview</span>
+            <svg viewBox="0 0 700 700" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Map showing candidate routes">
+              <g id="planContours" stroke="#173a27" stroke-width="2" fill="none" opacity="0.6">
+                <path d="M0,80 C120,50 260,110 400,80 C540,50 620,100 700,80"/>
+                <path d="M0,150 C130,190 250,110 390,150 C520,190 610,110 700,145"/>
+                <path d="M0,230 C110,180 260,270 400,230 C540,190 630,270 700,225"/>
+                <path d="M0,320 C140,370 260,260 400,320 C540,370 630,260 700,310"/>
+                <path d="M0,410 C120,350 270,450 410,400 C540,350 630,450 700,395"/>
+                <path d="M0,500 C130,550 260,440 400,500 C540,550 630,440 700,490"/>
+                <path d="M0,590 C120,540 270,630 410,590 C540,540 630,630 700,580"/>
+              </g>
+              <path id="planRoute-kokzhaylau" data-route="kokzhaylau" d="M110,560 C200,500 280,430 330,360 C350,335 365,350 380,330" fill="none" stroke="#797D81" stroke-width="2" stroke-dasharray="5 5" opacity="0.55"/>
+              <path id="planRoute-tribratya" data-route="tribratya" d="M110,560 C200,500 260,460 300,420 C340,375 350,355 380,330 C420,290 470,225 520,160" fill="none" stroke="#797D81" stroke-width="2" stroke-dasharray="5 5" opacity="0.55"/>
+              <path id="planRoute-furmanov" data-route="furmanov" d="M110,560 C210,490 260,440 310,400 C370,350 380,340 410,300 C470,225 540,165 600,110" fill="none" stroke="#797D81" stroke-width="2" stroke-dasharray="5 5" opacity="0.55"/>
+              <circle cx="110" cy="560" r="5" fill="#eef2ee" stroke="#797D81" stroke-width="1.5"/>
+              <text x="110" y="580" class="map-pt-label" text-anchor="middle">TRAILHEAD</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN 2 — ANALYSIS -->
+      <div class="app-screen" id="app-analysis" hidden>
+        <div class="app-cols">
+          <div class="app-side">
+            <div class="app-h1">Route analysis</div>
+            <div class="risk-hero">
+              <div class="num" id="riskScoreOut">— <span>/100</span></div>
+              <div class="band" id="riskBandOut">—</div>
+            </div>
+            <div class="risk-why" id="riskWhyOut"></div>
+
+            <div class="decision-card">
+              <div class="dc-label">Decision point</div>
+              <div class="dc-time">Reach before <span id="dcDeadline">—</span></div>
+              <div class="dc-note">If you arrive later, turning back is recommended.</div>
+            </div>
+
+            <div style="margin-top:16px;">
+              <div class="mini-kv-row"><span>Sunset</span><span class="v" id="anSunset">—</span></div>
+              <div class="mini-kv-row"><span>Expected finish</span><span class="v" id="anFinish">—</span></div>
+              <div class="mini-kv-row"><span>Safety buffer</span><span class="v">45 min</span></div>
+            </div>
+
+            <button class="app-btn" id="btnDownloadStart" type="button">Download route &amp; start</button>
+            <button class="app-btn ghost" id="btnChooseAnother" type="button">Choose another route</button>
+          </div>
+          <div class="app-map-wrap">
+            <span class="map-badge"><span class="dot"></span>Route Monitor</span>
+            <svg viewBox="0 0 700 700" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Full route with start, checkpoint, decision point, summit and safe exit">
+              <g stroke="#173a27" stroke-width="2" fill="none" opacity="0.6">
+                <path d="M0,80 C120,50 260,110 400,80 C540,50 620,100 700,80"/>
+                <path d="M0,230 C110,180 260,270 400,230 C540,190 630,270 700,225"/>
+                <path d="M0,410 C120,350 270,450 410,400 C540,350 630,450 700,395"/>
+                <path d="M0,590 C120,540 270,630 410,590 C540,540 630,630 700,580"/>
+              </g>
+              <path d="M110,560 C190,500 230,480 260,460" fill="none" stroke="#859E97" stroke-width="2.5"/>
+              <path d="M260,460 C310,425 340,365 380,330" fill="none" stroke="#859E97" stroke-width="2.5"/>
+              <path d="M380,330 C430,270 470,215 520,160" fill="none" stroke="#797D81" stroke-width="2" stroke-dasharray="5 5" opacity="0.85"/>
+              <path d="M380,330 C450,380 510,430 560,480" fill="none" stroke="#859E97" stroke-width="1.8" stroke-dasharray="4 4" opacity="0.8"/>
+              <circle cx="110" cy="560" r="6" fill="#eef2ee" stroke="#797D81" stroke-width="2"/>
+              <text x="110" y="582" class="map-pt-label" text-anchor="middle">START</text>
+              <circle cx="260" cy="460" r="6" fill="#eef2ee" stroke="#859E97" stroke-width="2"/>
+              <text x="260" y="440" class="map-pt-label" text-anchor="middle">CHECKPOINT</text>
+              <path d="M380,330 l9,-13 l9,13 l-9,13 z" fill="#f0e2cd" stroke="#a8742f" stroke-width="2"/>
+              <text x="380" y="308" class="map-pt-label" text-anchor="middle">DECISION POINT</text>
+              <path d="M520,160 l10,-15 l10,15 l-10,10 z" fill="#eef2ee" stroke="#797D81" stroke-width="2"/>
+              <text x="530" y="138" class="map-pt-label" text-anchor="middle">SUMMIT</text>
+              <circle cx="560" cy="480" r="6" fill="#eef2ee" stroke="#859E97" stroke-width="2"/>
+              <text x="560" y="502" class="map-pt-label" text-anchor="middle">SAFE EXIT</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN 3 — ACTIVE HIKE / ALERT / RETURN (one continuous map) -->
+      <div class="app-screen" id="app-track" hidden>
+        <div class="app-map-wrap">
+          <span class="map-badge" id="trackBadge"><span class="dot"></span>Tracking</span>
+          <svg viewBox="0 0 700 700" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Live route map with current position">
+            <g stroke="#173a27" stroke-width="2" fill="none" opacity="0.6">
+              <path d="M0,80 C120,50 260,110 400,80 C540,50 620,100 700,80"/>
+              <path d="M0,230 C110,180 260,270 400,230 C540,190 630,270 700,225"/>
+              <path d="M0,410 C120,350 270,450 410,400 C540,350 630,450 700,395"/>
+              <path d="M0,590 C120,540 270,630 410,590 C540,540 630,630 700,580"/>
+            </g>
+            <path id="segAhead" d="M110,560 C190,500 230,480 260,460 C310,425 340,365 380,330 C430,270 470,215 520,160" fill="none" stroke="#797D81" stroke-width="2" stroke-dasharray="5 5" opacity="0.6"/>
+            <path id="segReturnPath" d="M380,330 C450,380 510,430 560,480" fill="none" stroke="#859E97" stroke-width="2.5" stroke-dasharray="4 4" opacity="0" />
+            <path id="segTraveled" d="M110,560 L110,560" fill="none" stroke="#005C34" stroke-width="3.5"/>
+            <path id="segTraveled2" d="M260,460 L260,460" fill="none" stroke="#005C34" stroke-width="3.5" opacity="0"/>
+            <circle cx="110" cy="560" r="6" fill="#eef2ee" stroke="#797D81" stroke-width="2"/>
+            <text x="110" y="582" class="map-pt-label" text-anchor="middle">START</text>
+            <path id="ptDecision" d="M380,330 l9,-13 l9,13 l-9,13 z" fill="#f0e2cd" stroke="#a8742f" stroke-width="2"/>
+            <text x="380" y="308" class="map-pt-label" text-anchor="middle">DECISION POINT</text>
+            <path d="M520,160 l10,-15 l10,15 l-10,10 z" fill="#eef2ee" stroke="#797D81" stroke-width="2" opacity="0.7"/>
+            <text x="530" y="138" class="map-pt-label" text-anchor="middle" opacity="0.7">SUMMIT</text>
+            <circle id="ptSafeExit" cx="560" cy="480" r="7" fill="#eef2ee" stroke="#859E97" stroke-width="2"/>
+            <text x="560" y="502" class="map-pt-label" text-anchor="middle">SAFE EXIT</text>
+            <circle id="curDot" class="map-current" cx="260" cy="460" r="9" fill="#eef2ee" stroke="#005C34" stroke-width="3"/>
+          </svg>
+
+          <div class="map-overlay-panel" id="trackOverlayPanel">
+            <div class="stat-grid">
+              <div class="stat-cell"><div class="sk">Risk</div><div class="sv" id="stRisk">—</div></div>
+              <div class="stat-cell"><div class="sk">Distance left</div><div class="sv" id="stDistLeft">—</div></div>
+              <div class="stat-cell"><div class="sk">Current pace</div><div class="sv" id="stPace">—</div></div>
+              <div class="stat-cell"><div class="sk">Est. finish</div><div class="sv" id="stFinish">—</div></div>
+              <div class="stat-cell"><div class="sk">Sunset</div><div class="sv" id="stSunset">—</div></div>
+              <div class="stat-cell"><div class="sk">Battery</div><div class="sv" id="stBattery">—</div></div>
+            </div>
+
+            <div class="decision-window" id="dwBlock">
+              <div class="dw-label">Decision window</div>
+              <div class="dw-time" id="dwTimeLeft">—</div>
+              <div class="dw-sub"><span>Decision Point</span><span id="dwDist">—</span></div>
+              <div class="dw-sub"><span>Reach before</span><span id="dwDeadline">—</span></div>
+            </div>
+
+            <div class="offline-status" id="offlineStatus" hidden>
+              <div class="os-row"><span class="sname"><span class="os-dot"></span>GPS</span><span class="os-val">Active</span></div>
+              <div class="os-row"><span class="sname"><span class="os-dot"></span>Offline map</span><span class="os-val">Available</span></div>
+              <div class="os-row"><span class="sname"><span class="os-dot"></span>Decision Engine</span><span class="os-val">Active</span></div>
+              <div class="os-row"><span class="sname"><span class="os-dot"></span>Safety alerts</span><span class="os-val">Active</span></div>
+              <div class="os-weather" id="offlineWeather">Weather: last updated 13:42</div>
+            </div>
+
+            <button class="app-link-btn" id="btnSimSlow" type="button">Simulate slower pace</button>
+            <button class="app-link-btn" id="btnSimOffline" type="button">Simulate offline</button>
+          </div>
+        </div>
+
+        <!-- SCREEN 4 — ALERT (floats over the map) -->
+        <div class="float-panel" id="alertPanel" hidden>
+          <div class="emg-kicker">Risk increased</div>
+          <div class="risk-shift">
+            <span class="from" id="alFrom">—</span><span class="arrow">→</span><span class="to" id="alTo">—</span>
+          </div>
+          <p class="app-p" id="alBehindText">—</p>
+          <p class="app-p" id="alSunsetText">—</p>
+          <div class="recommend">
+            <div class="rl">Recommendation</div>
+            <div class="rt" id="alRecommend">—</div>
+          </div>
+          <button class="app-btn" id="btnTurnback" type="button">Turn back</button>
+          <button class="app-btn ghost" id="btnContinueAnyway" type="button">Continue anyway</button>
+        </div>
+
+        <!-- SCREEN 5 — RETURN MODE (floats over the map) -->
+        <div class="float-panel" id="returnPanel" hidden>
+          <span class="return-badge">Returning to safety</span>
+          <div class="risk-shift good" style="margin-top:14px;">
+            <span class="from" id="rtFrom">—</span><span class="arrow">→</span><span class="to" id="rtTo">—</span>
+          </div>
+          <div style="margin-top:14px;">
+            <div class="mini-kv-row"><span>Distance to safe exit</span><span class="v" id="rtDist">—</span></div>
+            <div class="mini-kv-row"><span>ETA</span><span class="v" id="rtEta">—</span></div>
+            <div class="mini-kv-row"><span>Battery</span><span class="v" id="rtBattery">—</span></div>
+          </div>
+          <p class="app-p" style="margin-top:16px;">Turning back now reduces your estimated risk.</p>
+          <button class="app-btn ghost" id="btnRestartFromReturn" type="button">Restart demo</button>
+        </div>
+      </div>
+
+      <!-- SCREEN 7 — EMERGENCY MODE -->
+      <div class="app-screen" id="app-emergency" hidden>
+        <div class="app-map-wrap">
+          <span class="map-badge offline"><span class="dot"></span>No signal</span>
+          <svg viewBox="0 0 700 700" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Emergency map with last known position and safe exit">
+            <g stroke="#173a27" stroke-width="2" fill="none" opacity="0.6">
+              <path d="M0,80 C120,50 260,110 400,80 C540,50 620,100 700,80"/>
+              <path d="M0,230 C110,180 260,270 400,230 C540,190 630,270 700,225"/>
+              <path d="M0,410 C120,350 270,450 410,400 C540,350 630,450 700,395"/>
+              <path d="M0,590 C120,540 270,630 410,590 C540,540 630,630 700,580"/>
+            </g>
+            <path d="M110,560 C190,500 230,480 260,460 C310,425 330,395 350,370" fill="none" stroke="#005C34" stroke-width="3" opacity="0.85"/>
+            <path d="M350,370 C440,410 500,440 560,480" fill="none" stroke="#797D81" stroke-width="2" stroke-dasharray="4 4" opacity="0.6"/>
+            <circle cx="110" cy="560" r="6" fill="#eef2ee" stroke="#797D81" stroke-width="2"/>
+            <text x="110" y="582" class="map-pt-label" text-anchor="middle">START</text>
+            <circle cx="560" cy="480" r="6" fill="#eef2ee" stroke="#859E97" stroke-width="2"/>
+            <text x="560" y="502" class="map-pt-label" text-anchor="middle">SAFE EXIT</text>
+            <circle cx="350" cy="370" r="60" fill="rgba(192,95,66,0.16)" stroke="#c05f42" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <circle class="map-current" cx="350" cy="370" r="7" fill="#f1f5f3" stroke="#c05f42" stroke-width="2.5"/>
+            <text x="350" y="345" class="map-pt-label" fill="#e2a883" text-anchor="middle">LAST KNOWN LOCATION</text>
+          </svg>
+        </div>
+
+        <div class="float-panel" id="emgFormPanel">
+          <div class="emg-kicker">Emergency mode</div>
+          <div class="app-h1" style="margin-top:8px;">Send your location to rescuers</div>
+          <div style="margin-top:16px;">
+            <div class="mini-kv-row"><span>Coordinates</span><span class="v" id="emgCoords">—</span></div>
+            <div class="mini-kv-row"><span>Battery</span><span class="v" id="emgBattery">—</span></div>
+            <div class="mini-kv-row"><span>Last GPS update</span><span class="v" id="emgLastUpdate">1 min ago</span></div>
+            <div class="mini-kv-row"><span>Distance to route</span><span class="v">420 m</span></div>
+          </div>
+          <button class="app-btn danger" id="btnSendSOS" type="button">Send SOS</button>
+          <button class="app-link-btn" id="btnReturnToRoute" type="button">Return to route</button>
+          <button class="app-link-btn" id="btnEmergencyInstr" type="button">Emergency instructions</button>
+          <button class="app-link-btn" id="btnShareCoords" type="button">Share coordinates</button>
+        </div>
+
+        <div class="float-panel" id="emgSentPanel" hidden>
+          <div class="emg-ok">SOS sent</div>
+          <div class="app-h1" style="margin-top:8px;">Last known position transmitted.</div>
+          <p class="app-p">Rescuers now have your coordinates, route history and the time of your last check-in.</p>
+          <div style="margin-top:16px;">
+            <div class="mini-kv-row"><span>Coordinates</span><span class="v" id="emgCoords2">—</span></div>
+            <div class="mini-kv-row"><span>Sent at</span><span class="v" id="emgSentAt">—</span></div>
+          </div>
+          <button class="app-btn ghost" id="btnRestartFromEmg" type="button">Restart demo</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<section id="problem">
+  <div class="wrap">
+    <div class="kicker reveal">The Problem</div>
+    <h2 class="reveal">A normal hike can become dangerous gradually.</h2>
+    <p class="lead reveal">It rarely starts with a fall. It starts with small, easy-to-ignore shifts — until the options run out.</p>
+    <div class="drift reveal">
+      <span class="drift-item">Moving slower</span><span class="drift-arrow">→</span>
+      <span class="drift-item">Weather worsens</span><span class="drift-arrow">→</span>
+      <span class="drift-item">Less daylight left</span><span class="drift-arrow">→</span>
+      <span class="drift-item">Battery draining</span><span class="drift-arrow">→</span>
+      <span class="drift-item">Signal disappears</span>
+    </div>
+    <blockquote class="reveal">Most apps show a map, or offer an SOS button — only after something has already gone wrong. PeakGuard tries to spot the dangerous trend before that happens.</blockquote>
+  </div>
+</section>
+
+<section id="how-it-works">
+  <div class="wrap">
+    <div class="kicker reveal">How PeakGuard Works</div>
+    <h2 class="reveal">Four steps, before something goes wrong</h2>
+
+    <div class="flow reveal">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <h3>Plan</h3>
+        <p>You choose a route, a start time, and your experience level.</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <h3>Analyze</h3>
+        <p>PeakGuard evaluates route difficulty, elevation, weather, daylight, your experience and expected duration.</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <h3>Monitor</h3>
+        <p>On the trail, it tracks GPS, pace, route deviation, remaining time, battery, and the Decision Point.</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">4</div>
+        <h3>Act</h3>
+        <p>If risk rises, PeakGuard doesn't just warn you — it tells you what to do.</p>
+      </div>
+    </div>
+
+    <div class="alert-stack reveal">
+      <div class="a-line">Risk increased <b>38 → 67</b></div>
+      <div class="a-line">You are moving <b>32% slower</b> than planned.</div>
+      <div class="a-line">If you continue, your descent may happen <b>after sunset</b>.</div>
+      <div class="a-line">Turn back within <b>20 minutes</b>.</div>
+    </div>
+  </div>
+</section>
+
+<section id="decision-point">
+  <div class="wrap">
+    <div class="kicker reveal">The Decision Point</div>
+    <h2 class="reveal">The Decision Point</h2>
+    <p class="lead reveal">PeakGuard calculates the moment when continuing becomes significantly riskier than turning back.</p>
+
+    <div class="dp-grid">
+      <div class="map-panel reveal">
+        <div class="map-head">
+          <span class="map-label">Route Monitor</span>
+          <span class="map-live">Tracking</span>
+        </div>
+        <svg class="map-svg" viewBox="0 0 320 168" role="img" aria-label="Full route map: start, current location, decision point, summit and safe exit">
+          <path d="M26,146 C55,128 78,118 96,104" fill="none" stroke="#005C34" stroke-width="3" stroke-linecap="round"/>
+          <path d="M96,104 C118,92 150,80 176,66" fill="none" stroke="#797D81" stroke-width="2" stroke-dasharray="4 4"/>
+          <path d="M176,66 C200,54 218,46 236,34" fill="none" stroke="#797D81" stroke-width="2" stroke-dasharray="4 4"/>
+          <path d="M176,66 C210,82 250,96 282,116" fill="none" stroke="#859E97" stroke-width="1.6" stroke-dasharray="3 4" opacity="0.8"/>
+          <circle cx="26" cy="146" r="4.5" fill="#eef2ee" stroke="#797D81" stroke-width="1.5"/>
+          <text x="26" y="160" class="map-pt-label" text-anchor="middle">START</text>
+          <circle class="map-current" cx="96" cy="104" r="6.5" fill="#eef2ee" stroke="#005C34" stroke-width="2.5"/>
+          <text x="96" y="94" class="map-pt-label" text-anchor="middle">CURRENT</text>
+          <path d="M176,66 l6,-9 l6,9 l-6,9 z" fill="#f0e2cd" stroke="#a8742f" stroke-width="1.5"/>
+          <text x="176" y="52" class="map-pt-label" text-anchor="middle">DECISION PT</text>
+          <path d="M236,34 l7,-11 l7,11 l-7,7 z" fill="#eef2ee" stroke="#797D81" stroke-width="1.5"/>
+          <text x="243" y="24" class="map-pt-label" text-anchor="middle">SUMMIT</text>
+          <circle cx="282" cy="116" r="4.5" fill="#eef2ee" stroke="#859E97" stroke-width="1.5"/>
+          <text x="282" y="130" class="map-pt-label" text-anchor="middle">SAFE EXIT</text>
+        </svg>
+      </div>
+
+      <div>
+        <div class="dp-panel">
+          <div class="dp-row"><span class="k">Reach Decision Point before</span><span class="v" id="dpDeadline">14:30</span></div>
+          <div class="dp-row"><span class="k">Time remaining</span><span class="v" id="dpTimeLeft">01:18:34</span></div>
+          <div class="dp-row"><span class="k">Current Risk</span><span class="v" id="dpRisk">46 / 100</span></div>
+        </div>
+        <div class="dp-shift-row">
+          <button class="btn btn-ghost" id="dpSimulate" type="button" style="font-size:12.5px; padding:9px 16px;">Simulate falling behind</button>
+        </div>
+        <p class="dp-shift-note" id="dpShiftNote"></p>
+        <p class="dp-closing reveal">PeakGuard doesn't just tell you where you are. It helps you decide whether you should keep going.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="risk-score">
+  <div class="wrap">
+    <div class="kicker reveal">Dynamic Risk Score</div>
+    <h2 class="reveal">A number you can trust — because you can see inside it</h2>
+
+    <div class="score-row reveal">
+      <div class="score-num">62<span>/100</span></div>
+      <div class="score-band">Elevated Risk</div>
+    </div>
+
+    <div class="factor-list reveal">
+      <div class="factor-row"><span class="fname"><span class="fdot" style="background:#a8742f;"></span>Weather</span><span class="fval">+18</span></div>
+      <div class="factor-row"><span class="fname"><span class="fdot" style="background:#005C34;"></span>Pace</span><span class="fval">+14</span></div>
+      <div class="factor-row"><span class="fname"><span class="fdot" style="background:#CCD3D9;"></span>Daylight</span><span class="fval">+12</span></div>
+      <div class="factor-row"><span class="fname"><span class="fdot" style="background:#859E97;"></span>Route difficulty</span><span class="fval">+10</span></div>
+      <div class="factor-row"><span class="fname"><span class="fdot" style="background:#797D81;"></span>Battery</span><span class="fval">+8</span></div>
+    </div>
+
+    <blockquote class="reveal">Not an AI guess. Every point of risk is connected to a real factor you can understand.</blockquote>
+  </div>
+</section>
+
+<section id="offline">
+  <div class="wrap">
+    <div class="kicker reveal">Offline-First</div>
+    <h2 class="reveal">No signal doesn't mean no protection.</h2>
+    <p class="lead reveal">Your route and everything the engine needs are downloaded before you leave cell coverage — so the core of PeakGuard keeps working without it.</p>
+
+    <div class="offline-grid reveal">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-nosignal">
+            <span class="phone-label">Three Brothers Pass</span>
+            <span class="phone-signal">No signal</span>
+          </div>
+          <div class="phone-time">13:42</div>
+          <div class="status-list">
+            <div class="status-row"><span class="sname"><span class="status-dot"></span>GPS Tracking</span><span class="status-val">Active</span></div>
+            <div class="status-row"><span class="sname"><span class="status-dot"></span>Offline Map</span><span class="status-val">Available</span></div>
+            <div class="status-row"><span class="sname"><span class="status-dot"></span>Route Monitoring</span><span class="status-val">Active</span></div>
+            <div class="status-row"><span class="sname"><span class="status-dot"></span>Decision Engine</span><span class="status-val">Active</span></div>
+            <div class="status-row"><span class="sname"><span class="status-dot"></span>Safety Alerts</span><span class="status-val">Active</span></div>
+          </div>
+          <div class="offline-note">Weather: last updated 13:42</div>
+        </div>
+      </div>
+      <p class="lead" style="margin-top:0; font-size:15px;">Once the route is downloaded, GPS tracking, the offline map, route monitoring and the Decision Engine keep running with no connection at all. Only live weather needs a signal to refresh — everything else already has what it needs.</p>
+    </div>
+  </div>
+</section>
+
+<section id="scenario">
+  <div class="wrap">
+    <div class="kicker reveal">A Real Hike</div>
+    <h2 class="reveal">One hike, minute by minute</h2>
+
+    <div class="timeline reveal">
+      <div class="tl-step">
+        <div class="tl-dot">09:00</div>
+        <div>
+          <div class="tl-title">Hike started</div>
+          <div class="tl-risk">Risk <b>24</b></div>
+        </div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-dot">11:15</div>
+        <div>
+          <div class="tl-title">Pace slower than expected</div>
+          <div class="tl-risk">Risk <b>38</b></div>
+        </div>
+      </div>
+      <div class="tl-step">
+        <div class="tl-dot">13:10</div>
+        <div>
+          <div class="tl-title">Weather deterioration approaching</div>
+          <div class="tl-risk">Risk <b>52</b></div>
+        </div>
+      </div>
+      <div class="tl-step alt">
+        <div class="tl-dot">13:35</div>
+        <div>
+          <div class="tl-title">Decision Point warning</div>
+          <div class="tl-body">PeakGuard: turn back within 20 minutes.</div>
+          <div class="tl-risk">Risk <b>68</b></div>
+        </div>
+      </div>
+      <div class="tl-step good">
+        <div class="tl-dot">13:42</div>
+        <div>
+          <div class="tl-title">User turns back</div>
+          <div class="tl-risk">Risk <b>68 → 41</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="never-happened reveal">
+      <p>The emergency never happened.</p>
+    </div>
+  </div>
+</section>
+
+<section id="emergency" class="section-quiet">
+  <div class="wrap">
+    <div class="kicker reveal">Emergency Mode</div>
+    <h2 class="reveal">If prevention fails, PeakGuard becomes an emergency tool.</h2>
+    <p class="lead reveal">This is the fallback, not the product. When it's needed, PeakGuard can hand rescuers the last data it has.</p>
+    <div class="tag-row reveal">
+      <span>SOS</span><span>GPS coordinates</span><span>Last known location</span><span>Route history</span><span>Battery level</span><span>Emergency instructions</span>
+    </div>
+  </div>
+</section>
+
+<section id="rescue">
+  <div class="wrap">
+    <div class="kicker reveal">Rescue Dashboard</div>
+    <h2 class="reveal">Not just a last GPS point.</h2>
+    <p class="lead reveal">PeakGuard gives rescuers context about what happened before contact was lost — not only where it was lost.</p>
+
+    <div class="dash reveal">
+      <div class="dash-map">
+        <svg viewBox="0 0 320 200" role="img" aria-label="Rescue dashboard map: GPS trail, last known location and search area">
+          <g stroke="#122a1c" stroke-width="1">
+            <line x1="0" y1="50" x2="320" y2="50"/><line x1="0" y1="100" x2="320" y2="100"/><line x1="0" y1="150" x2="320" y2="150"/>
+            <line x1="80" y1="0" x2="80" y2="200"/><line x1="160" y1="0" x2="160" y2="200"/><line x1="240" y1="0" x2="240" y2="200"/>
+          </g>
+          <path d="M30,168 C60,150 90,142 118,124 C146,106 168,96 196,82" fill="none" stroke="#797D81" stroke-width="2" stroke-dasharray="3 4"/>
+          <circle cx="30" cy="168" r="4" fill="#eef2ee" stroke="#797D81" stroke-width="1.5"/>
+          <circle cx="196" cy="82" r="52" fill="rgba(192,95,66,0.16)" stroke="#c05f42" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <circle cx="196" cy="82" r="6" fill="#f1f5f3" stroke="#c05f42" stroke-width="2.5"/>
+          <path d="M196,82 l16,-6 l-4,17 z" fill="#c05f42"/>
+          <text x="196" y="66" class="map-pt-label" fill="#e2a883" text-anchor="middle">LAST KNOWN LOCATION</text>
+          <text x="30" y="182" class="map-pt-label" text-anchor="middle">TRAILHEAD</text>
+        </svg>
+      </div>
+      <div class="dash-side">
+        <div class="kv-row"><span class="k">Last contact</span><span class="v">13:52</span></div>
+        <div class="kv-row"><span class="k">Battery</span><span class="v">21%</span></div>
+        <div class="kv-row"><span class="k">Route</span><span class="v">Three Brothers Pass</span></div>
+        <div class="kv-row"><span class="k">Experience</span><span class="v">Intermediate</span></div>
+        <div class="kv-row"><span class="k">Last check-in</span><span class="v">13:30 · on route</span></div>
+      </div>
+    </div>
+    <p class="dash-note reveal"><b>Not just a last GPS point.</b> PeakGuard provides context about what happened before contact was lost — pace, route history and how far off-plan the hiker already was.</p>
+  </div>
+</section>
+
+<section id="collective">
+  <div class="wrap">
+    <div class="kicker reveal">Collective Safety Data</div>
+    <h2 class="reveal">A quiet feedback loop, not a feed</h2>
+    <p class="lead reveal">After a hike, a hiker can flag what they found on the trail.</p>
+    <div class="hazard-row reveal">
+      <button class="hazard-chip" type="button">Slippery trail</button>
+      <button class="hazard-chip" type="button">Blocked route</button>
+      <button class="hazard-chip" type="button">Rockfall</button>
+      <button class="hazard-chip" type="button">No water</button>
+      <button class="hazard-chip" type="button">Other hazard</button>
+    </div>
+    <p class="hazard-note reveal">These reports quietly sharpen the warnings the next hiker on this trail will see.</p>
+  </div>
+</section>
+
+<section class="final" id="cta">
+  <div class="wrap">
+    <div class="kicker reveal">Start Safer</div>
+    <h2 class="reveal">Turn back before you need rescue.</h2>
+    <p class="lead reveal">Other apps help you call for help after an emergency happens. PeakGuard tries to make sure that call is never necessary.</p>
+    <div class="btn-row reveal">
+      <button class="btn btn-primary" id="openDemoFinal" type="button">Start safer hiking</button>
+    </div>
+    <div class="final-mark">PEAK<span style="color:#eef2ee;">GUARD</span></div>
+  </div>
+</section>
+
+<footer>
+  <p>PEAKGUARD · DECISION POINT ENGINE</p>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- scroll reveal ---------- */
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var revealEls = document.querySelectorAll(".reveal");
+  if(reduceMotion || !("IntersectionObserver" in window)){
+    revealEls.forEach(function(e){ e.classList.add("in-view"); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){ entry.target.classList.add("in-view"); io.unobserve(entry.target); }
+      });
+    }, { threshold:0.15, rootMargin:"0px 0px -40px 0px" });
+    revealEls.forEach(function(e){ io.observe(e); });
+  }
+
+  /* ---------- smooth scroll to How it works ---------- */
+  var btnHow = document.getElementById("btnHow");
+  if(btnHow){
+    btnHow.addEventListener("click", function(){
+      var target = document.getElementById("how-it-works");
+      if(target) target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block:"start" });
+    });
+  }
+
+  /* ---------- decision point live countdown + shift demo ---------- */
+  var dpTimeLeftEl = document.getElementById("dpTimeLeft");
+  var dpDeadlineEl = document.getElementById("dpDeadline");
+  var dpRiskEl = document.getElementById("dpRisk");
+  var dpShiftNoteEl = document.getElementById("dpShiftNote");
+  var dpSimBtn = document.getElementById("dpSimulate");
+  var dpSection = document.getElementById("decision-point");
+
+  var DP_BASE = { deadline:"14:30", remaining:78*60+34, risk:46 };
+  var DP_SHIFT = { deadline:"14:05", remaining:24*60+9, risk:63 };
+  var dpState = { active: DP_BASE, remaining: DP_BASE.remaining, shifted:false, timer:null };
+
+  function fmtHMS(totalSec){
+    totalSec = Math.max(0, Math.round(totalSec));
+    var h = Math.floor(totalSec/3600);
+    var m = Math.floor((totalSec%3600)/60);
+    var s = totalSec%60;
+    function pad(n){ return (n<10?"0":"")+n; }
+    return pad(h)+":"+pad(m)+":"+pad(s);
+  }
+
+  function dpRender(){
+    if(dpTimeLeftEl) dpTimeLeftEl.textContent = fmtHMS(dpState.remaining);
+    if(dpDeadlineEl) dpDeadlineEl.textContent = dpState.active.deadline;
+    if(dpRiskEl) dpRiskEl.textContent = dpState.active.risk + " / 100";
+  }
+  dpRender();
+
+  function dpTick(){
+    dpState.remaining -= 21;
+    if(dpState.remaining <= 0){
+      if(dpTimeLeftEl){ dpTimeLeftEl.textContent = "00:00:00"; dpTimeLeftEl.classList.add("bump"); }
+      clearInterval(dpState.timer); dpState.timer = null;
+      setTimeout(function(){
+        dpState.remaining = dpState.active.remaining;
+        if(dpTimeLeftEl) dpTimeLeftEl.classList.remove("bump");
+        dpRender();
+        dpStartTimer();
+      }, 2600);
+      return;
+    }
+    dpRender();
+  }
+  function dpStartTimer(){
+    if(dpState.timer) return;
+    dpState.timer = setInterval(dpTick, 250);
+  }
+  function dpStopTimer(){
+    if(dpState.timer){ clearInterval(dpState.timer); dpState.timer = null; }
+  }
+
+  if(dpSection && "IntersectionObserver" in window){
+    var dpIo = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting) dpStartTimer(); else dpStopTimer();
+      });
+    }, { threshold:0.2 });
+    dpIo.observe(dpSection);
+  } else {
+    dpStartTimer();
+  }
+
+  if(dpSimBtn){
+    dpSimBtn.addEventListener("click", function(){
+      dpState.shifted = !dpState.shifted;
+      dpState.active = dpState.shifted ? DP_SHIFT : DP_BASE;
+      dpState.remaining = dpState.active.remaining;
+      dpSimBtn.textContent = dpState.shifted ? "Reset to plan" : "Simulate falling behind";
+      if(dpRiskEl){ dpRiskEl.classList.add("bump"); setTimeout(function(){ dpRiskEl.classList.remove("bump"); }, 900); }
+      if(dpShiftNoteEl){
+        dpShiftNoteEl.innerHTML = dpState.shifted
+          ? "Decision Point changed <del>14:30</del> → <b>14:05</b>"
+          : "";
+      }
+      dpRender();
+    });
+  }
+
+  /* ---------- hazard chips (collective safety) ---------- */
+  document.querySelectorAll(".hazard-chip").forEach(function(chip){
+    chip.addEventListener("click", function(){ chip.classList.toggle("picked"); });
+  });
+
+  /* ---------- app product demo (Try PeakGuard) ---------- */
+  var ROUTES = {
+    tribratya: { name:"Three Brothers Pass", km:12, gain:850, difficulty:"Moderate",
+      wx:{ label:"Variable, overcast periods", risk:50 } },
+    kokzhaylau: { name:"Kok-Zhailau Trail", km:8, gain:420, difficulty:"Easy",
+      wx:{ label:"Clear", risk:15 } },
+    furmanov: { name:"Furmanov Peak", km:16, gain:1200, difficulty:"Hard",
+      wx:{ label:"Deteriorating through the day", risk:85 } }
+  };
+  var PACE_BY_EXP = { novice:2.5, medium:3.2, expert:4.0 };
+  var ELEV_FACTOR = { novice:0.22, medium:0.15, expert:0.10 };
+  var EXP_RISK = { novice:80, medium:48, expert:18 };
+  var DECISION_FRAC = 0.65;
+  var CP_FRAC = 0.55;
+
+  var el = {};
+  [
+    "appOverlay","appClose","appStepLabel","openDemoTop","openDemoHero","openDemoFinal",
+    "app-plan","app-analysis","app-track","app-emergency",
+    "startTimeInput","planDurationOut","planWeatherOut","btnAnalyze",
+    "riskScoreOut","riskBandOut","riskWhyOut","dcDeadline","anSunset","anFinish",
+    "btnDownloadStart","btnChooseAnother",
+    "trackBadge","trackOverlayPanel","segAhead","segTraveled","segTraveled2","segReturnPath","ptDecision","ptSafeExit","curDot",
+    "stRisk","stDistLeft","stPace","stFinish","stSunset","stBattery",
+    "dwBlock","dwTimeLeft","dwDist","dwDeadline",
+    "offlineStatus","offlineWeather","btnSimSlow","btnSimOffline",
+    "alertPanel","alFrom","alTo","alBehindText","alSunsetText","alRecommend","btnTurnback","btnContinueAnyway",
+    "returnPanel","rtFrom","rtTo","rtDist","rtEta","rtBattery","btnRestartFromReturn",
+    "emgFormPanel","emgCoords","emgBattery","emgLastUpdate","btnSendSOS","btnReturnToRoute","btnEmergencyInstr","btnShareCoords",
+    "emgSentPanel","emgCoords2","emgSentAt","btnRestartFromEmg"
+  ].forEach(function(id){ el[id] = document.getElementById(id); });
+
+  var routeOpts = document.querySelectorAll(".route-opt");
+  var expBtns = document.querySelectorAll("#expRow .seg-btn");
+
+  var SCREENS = ["app-plan","app-analysis","app-track","app-emergency"];
+  var STEP_LABELS = { "app-plan":"Plan your hike", "app-analysis":"Route analysis", "app-track":"Active hike", "app-emergency":"Emergency mode" };
+
+  var st = {
+    routeId:null, exp:"medium", startMin:360,
+    ascentHours:0, descentHours:0, speedEff:0, ascentKm:0, decisionKm:0,
+    deadlines:{ start:360, finish:0, summit:0, decision:0 },
+    baseRisk:0, riskParts:null,
+    simMin:0, actualKm:0, paceMult:100, battery:100,
+    liveRisk:0, riskAtSimClick:null,
+    timer:null, alerted:false, offline:false
+  };
+
+  function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+  function clock(minsOfDay){
+    var m = Math.round(minsOfDay);
+    var h = Math.floor(m/60) % 24; if(h<0) h+=24;
+    var mm = ((m%60)+60)%60;
+    return (h<10?"0":"")+h+":"+(mm<10?"0":"")+mm;
+  }
+  function fmtCountdown(totalMin){
+    var totalSec = Math.max(0, Math.round(totalMin*60));
+    var h = Math.floor(totalSec/3600);
+    var m = Math.floor((totalSec%3600)/60);
+    var s = totalSec%60;
+    function pad(n){ return (n<10?"0":"")+n; }
+    return pad(h)+":"+pad(m)+":"+pad(s);
+  }
+  function fmtDur(hours){
+    var h = Math.floor(hours);
+    var m = Math.round((hours-h)*60);
+    if(m===60){ h+=1; m=0; }
+    return "≈ "+h+"h "+m+"m";
+  }
+  function riskBand(score){
+    if(score<40) return { label:"Low Risk", cls:"low" };
+    if(score<70) return { label:"Elevated Risk", cls:"" };
+    return { label:"High Risk", cls:"high" };
+  }
+
+  function showAppScreen(name){
+    SCREENS.forEach(function(s){ if(el[s]) el[s].hidden = (s!==name); });
+    if(el.appStepLabel) el.appStepLabel.textContent = STEP_LABELS[name] || "";
+  }
+
+  function openApp(){
+    resetAll();
+    el.appOverlay.hidden = false;
+  }
+  function closeApp(){
+    if(st.timer){ clearInterval(st.timer); st.timer=null; }
+    el.appOverlay.hidden = true;
+  }
+  if(el.openDemoTop) el.openDemoTop.addEventListener("click", openApp);
+  if(el.openDemoHero) el.openDemoHero.addEventListener("click", openApp);
+  if(el.openDemoFinal) el.openDemoFinal.addEventListener("click", openApp);
+  el.appClose.addEventListener("click", closeApp);
+  el.appOverlay.addEventListener("click", function(e){ if(e.target===el.appOverlay) closeApp(); });
+  document.addEventListener("keydown", function(e){ if(e.key==="Escape" && !el.appOverlay.hidden) closeApp(); });
+
+  function resetAll(){
+    if(st.timer){ clearInterval(st.timer); st.timer=null; }
+    st.routeId=null; st.simMin=0; st.actualKm=0; st.paceMult=100; st.battery=100;
+    st.alerted=false; st.offline=false; st.riskAtSimClick=null;
+    routeOpts.forEach(function(o){ o.classList.remove("active"); });
+    resetPlanRouteLines();
+    el.btnAnalyze.disabled = true;
+    el.planDurationOut.textContent = "—";
+    el.planWeatherOut.textContent = "—";
+    el.startTimeInput.value = "06:00";
+    st.startMin = 360;
+    el.alertPanel.hidden = true;
+    el.returnPanel.hidden = true;
+    el.offlineStatus.hidden = true;
+    el.trackOverlayPanel.style.display = "";
+    el.emgFormPanel.hidden = false;
+    el.emgSentPanel.hidden = true;
+    el.trackBadge.classList.remove("offline");
+    el.trackBadge.innerHTML = '<span class="dot"></span>Tracking';
+    showAppScreen("app-plan");
+  }
+
+  function resetPlanRouteLines(){
+    ["tribratya","kokzhaylau","furmanov"].forEach(function(id){
+      var p = document.getElementById("planRoute-"+id);
+      if(!p) return;
+      p.setAttribute("stroke", "#797D81");
+      p.setAttribute("stroke-width", "2");
+      p.setAttribute("stroke-dasharray", "5 5");
+      p.setAttribute("opacity", "0.55");
+    });
+  }
+
+  function updatePlanPreview(){
+    if(!st.routeId) return;
+    var r = ROUTES[st.routeId];
+    var pace = PACE_BY_EXP[st.exp];
+    var elevFactor = ELEV_FACTOR[st.exp];
+    var ascentHours = (r.km/pace) + (r.gain/100)*elevFactor;
+    var descentHours = ascentHours*0.62;
+    el.planDurationOut.textContent = fmtDur(ascentHours+descentHours);
+    el.planWeatherOut.textContent = r.wx.label;
+  }
+
+  routeOpts.forEach(function(opt){
+    opt.addEventListener("click", function(){
+      routeOpts.forEach(function(o){ o.classList.remove("active"); });
+      opt.classList.add("active");
+      st.routeId = opt.getAttribute("data-route");
+      el.btnAnalyze.disabled = false;
+      resetPlanRouteLines();
+      var line = document.getElementById("planRoute-"+st.routeId);
+      if(line){
+        line.setAttribute("stroke", "#005C34");
+        line.setAttribute("stroke-width", "3.5");
+        line.setAttribute("stroke-dasharray", "none");
+        line.setAttribute("opacity", "1");
+      }
+      updatePlanPreview();
+    });
+  });
+  expBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      expBtns.forEach(function(x){ x.classList.remove("active"); });
+      b.classList.add("active");
+      st.exp = b.getAttribute("data-exp");
+      updatePlanPreview();
+    });
+  });
+  el.startTimeInput.addEventListener("change", function(){
+    var parts = (el.startTimeInput.value||"06:00").split(":");
+    st.startMin = (parseInt(parts[0],10)||6)*60 + (parseInt(parts[1],10)||0);
+  });
+
+  function computePlan(){
+    var r = ROUTES[st.routeId];
+    var pace = PACE_BY_EXP[st.exp];
+    var elevFactor = ELEV_FACTOR[st.exp];
+    st.ascentKm = r.km;
+    st.ascentHours = (r.km/pace) + (r.gain/100)*elevFactor;
+    st.descentHours = st.ascentHours * 0.62;
+    st.speedEff = st.ascentKm / st.ascentHours;
+    st.decisionKm = st.ascentKm * DECISION_FRAC;
+
+    var complexity = clamp((r.gain/1200)*55 + (r.km/16)*45, 0, 100);
+    var weather = r.wx.risk;
+    var experience = EXP_RISK[st.exp];
+    var totalTripHours = st.ascentHours + st.descentHours;
+    var margin = 12 - totalTripHours;
+    var daylight = clamp(100 - margin*22, 0, 100);
+
+    var pWeather = weather*0.30;
+    var pDifficulty = complexity*0.20;
+    var pPace = complexity*0.10;
+    var pExperience = experience*0.25;
+    var pDaylight = daylight*0.15;
+    var risk = Math.round(pWeather+pDifficulty+pPace+pExperience+pDaylight);
+
+    st.baseRisk = risk;
+    st.riskParts = {
+      weather: Math.round(pWeather),
+      difficulty: Math.round(pDifficulty),
+      pace: Math.round(pPace),
+      experience: Math.round(pExperience),
+      daylight: Math.round(pDaylight)
+    };
+
+    var sunset = 18*60, buffer = 45, start = st.startMin;
+    var finish = sunset - buffer;
+    var summit = finish - st.descentHours*60;
+    var decision = summit - st.ascentHours*(1-DECISION_FRAC)*60;
+    st.deadlines = { start:start, finish:finish, summit:summit, decision:decision, sunset:sunset };
+
+    return risk;
+  }
+
+  el.btnAnalyze.addEventListener("click", function(){
+    if(!st.routeId) return;
+    var risk = computePlan();
+    el.riskScoreOut.innerHTML = risk + ' <span>/100</span>';
+    var band = riskBand(risk);
+    el.riskBandOut.textContent = band.label;
+    el.riskBandOut.className = "band " + band.cls;
+    el.riskWhyOut.innerHTML = [
+      ["Weather", st.riskParts.weather],
+      ["Pace / duration", st.riskParts.pace],
+      ["Route difficulty", st.riskParts.difficulty],
+      ["Experience", st.riskParts.experience],
+      ["Daylight", st.riskParts.daylight]
+    ].map(function(p){ return "<span>"+p[0]+" <b>+"+p[1]+"</b></span>"; }).join("");
+    el.dcDeadline.textContent = clock(st.deadlines.decision);
+    el.anSunset.textContent = clock(st.deadlines.sunset);
+    el.anFinish.textContent = clock(st.deadlines.finish);
+    showAppScreen("app-analysis");
+  });
+
+  el.btnChooseAnother.addEventListener("click", function(){ showAppScreen("app-plan"); });
+
+  /* ---------- map position helper (Start -> Checkpoint -> Decision Point) ---------- */
+  var PT_START = {x:110,y:560}, PT_CP = {x:260,y:460}, PT_DEC = {x:380,y:330}, PT_SAFE = {x:560,y:480};
+  function pointAlong(frac){
+    frac = clamp(frac,0,1);
+    if(frac<=CP_FRAC){
+      var t = CP_FRAC>0 ? frac/CP_FRAC : 0;
+      return { x: PT_START.x+(PT_CP.x-PT_START.x)*t, y: PT_START.y+(PT_CP.y-PT_START.y)*t, seg:1 };
+    }
+    var t2 = (frac-CP_FRAC)/(1-CP_FRAC);
+    return { x: PT_CP.x+(PT_DEC.x-PT_CP.x)*t2, y: PT_CP.y+(PT_DEC.y-PT_CP.y)*t2, seg:2 };
+  }
+
+  function startTracking(){
+    st.simMin = 0; st.actualKm = 0; st.alerted = false; st.paceMult = 100; st.battery = 100;
+    st.offline = false; st.riskAtSimClick = null; st.forceAlertAt = undefined;
+    el.alertPanel.hidden = true;
+    el.returnPanel.hidden = true;
+    el.offlineStatus.hidden = true;
+    el.trackOverlayPanel.style.display = "";
+    el.trackBadge.classList.remove("offline");
+    el.trackBadge.innerHTML = '<span class="dot"></span>Tracking';
+    el.segTraveled.setAttribute("d", "M"+PT_START.x+","+PT_START.y+" L"+PT_START.x+","+PT_START.y);
+    el.segTraveled2.setAttribute("opacity","0");
+    el.segReturnPath.setAttribute("opacity","0");
+    el.segAhead.setAttribute("opacity","0.6");
+    el.curDot.setAttribute("cx", PT_START.x); el.curDot.setAttribute("cy", PT_START.y);
+    showAppScreen("app-track");
+    st.timer = setInterval(trackTick, 260);
+    trackTick();
+  }
+  el.btnDownloadStart.addEventListener("click", startTracking);
+
+  function trackTick(){
+    var STEP = 3;
+    st.simMin += STEP;
+    var elapsedH = st.simMin/60;
+    var actualSpeed = st.speedEff * (st.paceMult/100);
+    st.actualKm += actualSpeed * (STEP/60);
+    var avgSpeed = st.actualKm/elapsedH;
+    var now = st.deadlines.start + st.simMin;
+    st.battery = clamp(100 - st.simMin*0.32, 4, 100);
+
+    var fracToDecision = st.decisionKm>0 ? st.actualKm/st.decisionKm : 0;
+    var pt = pointAlong(fracToDecision);
+    el.curDot.setAttribute("cx", pt.x.toFixed(1));
+    el.curDot.setAttribute("cy", pt.y.toFixed(1));
+    if(pt.seg===1){
+      el.segTraveled.setAttribute("d", "M"+PT_START.x+","+PT_START.y+" L"+pt.x.toFixed(1)+","+pt.y.toFixed(1));
+      el.segTraveled2.setAttribute("opacity","0");
+    } else {
+      el.segTraveled.setAttribute("d", "M"+PT_START.x+","+PT_START.y+" L"+PT_CP.x+","+PT_CP.y);
+      el.segTraveled2.setAttribute("d", "M"+PT_CP.x+","+PT_CP.y+" L"+pt.x.toFixed(1)+","+pt.y.toFixed(1));
+      el.segTraveled2.setAttribute("opacity","1");
+    }
+
+    var paceDeficit = Math.max(0, 100-st.paceMult);
+    st.liveRisk = clamp(st.baseRisk + paceDeficit*0.9, 0, 100);
+    el.stRisk.textContent = Math.round(st.liveRisk)+"/100";
+    el.stDistLeft.textContent = Math.max(0, st.ascentKm-st.actualKm).toFixed(1)+" km";
+    el.stPace.textContent = actualSpeed.toFixed(1)+" km/h";
+    el.stSunset.textContent = clock(st.deadlines.sunset);
+    el.stBattery.textContent = Math.round(st.battery)+"%";
+
+    var remainingKm = Math.max(0, st.ascentKm - st.actualKm);
+    var paceRatio = avgSpeed>0 ? avgSpeed/st.speedEff : 1;
+    var projToSummitH = avgSpeed>0.05 ? remainingKm/avgSpeed : 99;
+    var projSummitClock = now + projToSummitH*60;
+    var projDescentMin = st.descentHours*60/Math.max(0.3, paceRatio);
+    var projFinishClock = projSummitClock + projDescentMin;
+    var overBy = projFinishClock - st.deadlines.finish;
+    el.stFinish.textContent = clock(projFinishClock);
+
+    var distToDecision = Math.max(0, st.decisionKm-st.actualKm);
+    el.dwDist.textContent = distToDecision.toFixed(1)+" km";
+    el.dwDeadline.textContent = clock(st.deadlines.decision);
+    el.dwTimeLeft.textContent = fmtCountdown(Math.max(0, st.deadlines.decision-now));
+
+    if(st.actualKm >= st.ascentKm && !st.alerted){
+      clearInterval(st.timer); st.timer=null;
+      showReturnPanel({
+        badge:"Summit reached", from:null, to:null,
+        distLabel:"Descent begins", distValue: (st.ascentKm*0.18).toFixed(1)+" km",
+        eta: clock(now+st.descentHours*60), battery: Math.round(st.battery)+"%",
+        note:"You reached the summit on schedule. No intervention needed."
+      });
+      return;
+    }
+
+    var forced = st.forceAlertAt!==undefined && st.simMin>=st.forceAlertAt;
+    if((overBy>0 || forced) && !st.alerted && fracToDecision>=0.12 && fracToDecision<1.1){
+      st.alerted = true;
+      clearInterval(st.timer); st.timer=null;
+      var dark = projFinishClock > st.deadlines.sunset;
+      var riskBefore = st.riskAtSimClick!==null ? st.riskAtSimClick : Math.round(st.baseRisk);
+      var riskAfter = Math.round(st.liveRisk);
+      var behindPct = Math.max(1, Math.round(100-st.paceMult));
+      var recommendMin = clamp(Math.round(25 - behindPct*0.15), 8, 30);
+
+      st._now = now; st._riskAfter = riskAfter;
+
+      el.alFrom.textContent = riskBefore;
+      el.alTo.textContent = riskAfter;
+      el.alBehindText.textContent = "You are "+behindPct+"% behind the planned pace.";
+      el.alSunsetText.textContent = dark
+        ? "At your current pace, your descent may happen after sunset."
+        : "At your current pace, you are losing your safety margin.";
+      el.alRecommend.textContent = "Turn back within "+recommendMin+" minutes.";
+
+      el.trackOverlayPanel.style.display = "none";
+      el.alertPanel.hidden = false;
+      if(el.appStepLabel) el.appStepLabel.textContent = "Decision point";
+    }
+  }
+
+  el.btnSimSlow.addEventListener("click", function(){
+    if(!st.timer || st.alerted) return;
+    st.riskAtSimClick = Math.round(st.liveRisk);
+    st.paceMult = 55;
+    st.forceAlertAt = st.simMin + 15;
+  });
+
+  el.btnSimOffline.addEventListener("click", function(){
+    st.offline = !st.offline;
+    el.trackBadge.classList.toggle("offline", st.offline);
+    el.trackBadge.innerHTML = st.offline ? '<span class="dot"></span>Offline' : '<span class="dot"></span>Tracking';
+    el.offlineStatus.hidden = !st.offline;
+    if(st.offline) el.offlineWeather.textContent = "Weather: last updated "+clock(st.deadlines.start+st.simMin);
+  });
+
+  function showReturnPanel(cfg){
+    el.alertPanel.hidden = true;
+    el.trackOverlayPanel.style.display = "none";
+    el.segReturnPath.setAttribute("opacity", cfg.from!==null ? "1" : "0");
+    el.segAhead.setAttribute("opacity", "0.15");
+    if(cfg.from!==null){
+      var pt = { x: PT_DEC.x+(PT_SAFE.x-PT_DEC.x)*0.4, y: PT_DEC.y+(PT_SAFE.y-PT_DEC.y)*0.4 };
+      el.curDot.setAttribute("cx", pt.x.toFixed(1));
+      el.curDot.setAttribute("cy", pt.y.toFixed(1));
+    }
+    el.returnPanel.querySelector(".return-badge").textContent = cfg.badge;
+    if(cfg.from!==null){
+      el.rtFrom.textContent = cfg.from; el.rtTo.textContent = cfg.to;
+      el.rtFrom.style.display = ""; el.returnPanel.querySelector(".arrow").style.display = ""; el.rtTo.style.display = "";
+    } else {
+      el.rtFrom.style.display = "none"; el.returnPanel.querySelector(".arrow").style.display = "none";
+      el.rtTo.textContent = ""; el.rtTo.style.display = "none";
+    }
+    el.rtDist.textContent = cfg.distValue;
+    el.rtDist.parentElement.querySelector("span").textContent = cfg.distLabel || "Distance to safe exit";
+    el.rtEta.textContent = cfg.eta;
+    el.rtBattery.textContent = cfg.battery;
+    el.returnPanel.querySelector(".app-p").textContent = cfg.note || "Turning back now reduces your estimated risk.";
+    el.returnPanel.hidden = false;
+    if(el.appStepLabel) el.appStepLabel.textContent = cfg.badge;
+  }
+
+  el.btnTurnback.addEventListener("click", function(){
+    var safeExitKm = (st.ascentKm/12)*2.2;
+    var remaining = safeExitKm*0.6;
+    var eta = st._now + (remaining/Math.max(0.8,st.speedEff*1.1))*60;
+    var newRisk = Math.max(15, st._riskAfter-27);
+    showReturnPanel({
+      badge:"Returning to safety",
+      from: st._riskAfter, to: newRisk,
+      distLabel:"Distance to safe exit", distValue: remaining.toFixed(1)+" km",
+      eta: clock(eta), battery: Math.round(Math.max(3,st.battery-6))+"%",
+      note:"Turning back now reduces your estimated risk."
+    });
+  });
+
+  el.btnRestartFromReturn.addEventListener("click", resetAll);
+
+  function openEmergency(){
+    el.emgFormPanel.hidden = false;
+    el.emgSentPanel.hidden = true;
+    el.emgCoords.textContent = "43.1234, 76.9123";
+    el.emgBattery.textContent = Math.round(st.battery)+"%";
+    showAppScreen("app-emergency");
+  }
+  el.btnContinueAnyway.addEventListener("click", openEmergency);
+
+  el.btnSendSOS.addEventListener("click", function(){
+    el.emgFormPanel.hidden = true;
+    el.emgSentPanel.hidden = false;
+    el.emgCoords2.textContent = el.emgCoords.textContent;
+    el.emgSentAt.textContent = clock(st.deadlines.start + st.simMin);
+  });
+  el.btnReturnToRoute.addEventListener("click", function(){
+    showAppScreen("app-track");
+    el.btnTurnback.click();
+  });
+  el.btnEmergencyInstr.addEventListener("click", function(e){ e.preventDefault(); });
+  el.btnShareCoords.addEventListener("click", function(e){ e.preventDefault(); });
+  el.btnRestartFromEmg.addEventListener("click", resetAll);
+
+})();
+</script>
+
+</body>
+</html>
