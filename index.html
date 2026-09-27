@@ -2661,14 +2661,27 @@ svg.leaflet-image-layer.leaflet-interactive path {
           whyParts.push("Weather is expected to worsen around "+fmtClockDate(weather.worsensAt)+", which moves your deadline earlier.");
         }
       }
+
+      /* If the chosen start time already leaves no safe daylight margin — the
+         Decision Point deadline falls at or before the moment you'd even start —
+         the plan is infeasible as scheduled. Flag this clearly instead of
+         silently scoring it "low risk" and only revealing the problem once
+         tracking starts (which looked like a random, unexplained alert). */
+      var startTooLate = decisionDeadline.getTime() <= startDate.getTime();
+      if(startTooLate){
+        risk = clamp(Math.max(risk, 90), 0, 100);
+        whyParts.unshift("Starting at "+fmtClockDate(startDate)+" already leaves no safe daylight margin for this route — the safe turn-back time would be at or before your start.");
+      }
       if(whyParts.length===0) whyParts.push("Based on your pace and the distance remaining after the Decision Point.");
 
       var band = riskBand(risk);
-      var recommendation = band.cls==="high"
-        ? "This route carries high risk for your profile right now. Consider an easier route, a different day, or starting much earlier."
-        : (band.cls==="low"
-          ? "Risk is low for your profile. Stick to the plan, watch the Decision Point, and keep checking conditions."
-          : "Risk is moderate. Respect the Decision Point deadline and be ready to turn back if you fall behind pace.");
+      var recommendation = startTooLate
+        ? "This start time doesn't leave enough daylight for this route. Pick an earlier start time, or a shorter route."
+        : (band.cls==="high"
+          ? "This route carries high risk for your profile right now. Consider an easier route, a different day, or starting much earlier."
+          : (band.cls==="low"
+            ? "Risk is low for your profile. Stick to the plan, watch the Decision Point, and keep checking conditions."
+            : "Risk is moderate. Respect the Decision Point deadline and be ready to turn back if you fall behind pace."));
 
       plan = {
         distOut:distOut, distTop:distTop, distReturn:distReturn, pace:basePace,
@@ -2878,13 +2891,15 @@ svg.leaflet-image-layer.leaflet-interactive path {
     if(track.mode==="sim" && track.simTimer){ clearInterval(track.simTimer); track.simTimer=null; }
     var riskBefore = plan.risk;
     var riskAfter = Math.round(track.liveRisk);
-    var behindPct = clamp(Math.round(100*(1-pace/plan.pace)), 1, 95);
+    var behindPct = clamp(Math.round(100*(1-pace/plan.pace)), 0, 95);
     var recommendMin = clamp(Math.round(25 - behindPct*0.15), 8, 30);
     var dark = plan.sunset && now.getTime() > (plan.sunset.getTime()-SAFETY_BUFFER_MIN*60000);
 
     el.alFrom.textContent = riskBefore;
     el.alTo.textContent = riskAfter;
-    el.alBehindText.textContent = "You are "+behindPct+"% behind the planned pace.";
+    el.alBehindText.textContent = behindPct>0
+      ? "You are "+behindPct+"% behind the planned pace."
+      : "Your pace is on plan — this route's own daylight margin is the limit, not your speed.";
     el.alSunsetText.textContent = dark
       ? "At your current pace, you may not reach the Decision Point in time."
       : "At your current pace, you are losing your safety margin.";
