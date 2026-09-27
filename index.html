@@ -1,6 +1,4 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>PeakGuard</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Noto+Sans:wght@400;600;700&family=PT+Mono:wght@400;700&display=swap">
-</head><body><style>
+<!doctype html><html><head><meta charset="utf-8"><title>PeakGuard</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Noto+Sans:wght@400;600;700&family=PT+Mono:wght@400;700&display=swap"></head><body><style>
   :root{
     color-scheme: light;
     --paper: #f6f4ee;
@@ -207,7 +205,16 @@
   }
   .map-badge .dot{ width:6px; height:6px; border-radius:50%; background:#5fbf85; }
   .map-badge.offline .dot{ background:#c07a4a; }
+  .map-badge.sim-mode{ color:#e8c99a; border-color:#5a4a2c; }
+  .map-badge.sim-mode .dot{ background:#e8c99a; animation:mapPulse2 1.4s ease-in-out infinite; }
   .map-badge[hidden]{ display:none !important; }
+
+  .sim-banner{
+    font-family:var(--font-mono); font-size:10px; letter-spacing:0.05em; text-transform:uppercase;
+    color:#e8c99a; background:rgba(168,116,47,0.18); border:1px solid #5a4a2c; border-radius:8px;
+    padding:7px 10px; margin-bottom:10px; text-align:center;
+  }
+  .sim-banner[hidden]{ display:none !important; }
 
   .map-overlay-panel{
     position:absolute; right:16px; top:16px; bottom:16px; width:270px; overflow-y:auto; z-index:3;
@@ -1552,6 +1559,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
           </div>
 
           <div class="map-overlay-panel" id="trackOverlayPanel">
+            <div class="sim-banner" id="simBanner" hidden>SIMULATED — not a real hike</div>
             <div class="stat-grid">
               <div class="stat-cell"><div class="sk">Risk</div><div class="sv" id="stRisk">—</div></div>
               <div class="stat-cell"><div class="sk">Distance left</div><div class="sv" id="stDistLeft">—</div></div>
@@ -2089,7 +2097,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     "weatherGrid","weatherReasons","weatherUnavailable",
     "terrainGrid","elevChartWrap","terrainReasons","terrainUnavailable",
     "btnDownloadStart","btnChooseAnother",
-    "trackBadge","trackOverlayPanel","gpsGate","btnEnableGps","btnSimulateInstead",
+    "trackBadge","trackOverlayPanel","simBanner","gpsGate","btnEnableGps","btnSimulateInstead",
     "stRisk","stDistLeft","stPace","stFinish","stSunset","stBattery","stDeviation",
     "dwBlock","dwTimeLeft","dwDist","dwDeadline",
     "offlineStatus","offlineWeather","btnSimSlow","btnSimOffline",
@@ -2772,12 +2780,13 @@ svg.leaflet-image-layer.leaflet-interactive path {
     }).catch(function(){});
   }
 
+  function fmtBattery(v){ return v!=null ? Math.round(v)+"%" : "N/A"; }
   function freshTrackState(){
     return {
       mode:null, watchId:null, trail:[], current:null, startedAt:null,
       simTimer:null, simDistKm:0, simElapsedMs:0, paceOverrideMult:1,
       phase:"out", reachedDecision:false, finished:false, alerted:false, offline:false,
-      battery: realBatteryLevel!=null?realBatteryLevel:100, liveRisk:0, lastNow:null
+      battery: realBatteryLevel, liveRisk:0, lastNow:null
     };
   }
   function stopTracking(){
@@ -2797,8 +2806,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
     var gp = el.gpsGate.querySelector(".app-p");
     if(gp) gp.textContent = "PeakGuard will use your device's real location to track your position on the route and warn you before the Decision Point.";
     el.btnEnableGps.textContent = "Enable GPS tracking";
-    el.trackBadge.classList.remove("offline");
+    el.trackBadge.classList.remove("offline","sim-mode");
     el.trackBadge.innerHTML = '<span class="dot"></span>Tracking';
+    if(el.simBanner) el.simBanner.hidden = true;
     el.btnSimSlow.textContent = "Simulate slower pace";
     var map = attachMapTo("trackMapHost");
     clearRouteLayers(map);
@@ -2888,7 +2898,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     showResultPanel({
       badge:"Finish reached", from:null, to:null,
       distLabel:"Total distance", distValue:(plan.distOut+plan.distTop).toFixed(1)+" km",
-      eta: fmtClockDate(now), battery: Math.round(track.battery)+"%",
+      eta: fmtClockDate(now), battery: fmtBattery(track.battery),
       note:"You reached the finish on schedule. No intervention needed."
     });
   }
@@ -2898,7 +2908,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     showResultPanel({
       badge:"Back at start", from:null, to:null,
       distLabel:"You are safe", distValue:"0.0 km",
-      eta: fmtClockDate(now), battery: Math.round(track.battery)+"%",
+      eta: fmtClockDate(now), battery: fmtBattery(track.battery),
       note:"You made it back to the start safely."
     });
   }
@@ -2908,9 +2918,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
     var now = track.mode==="sim" ? new Date(plan.startAt.getTime()+track.simElapsedMs) : new Date();
     track.lastNow = now;
     var pace = currentPace();
-    track.battery = realBatteryLevel!=null ? realBatteryLevel : clamp(track.battery - 0.01, 5, 100);
+    track.battery = realBatteryLevel;
     el.stSunset.textContent = fmtClockDate(plan.sunset);
-    el.stBattery.textContent = Math.round(track.battery)+"%";
+    el.stBattery.textContent = fmtBattery(track.battery);
     el.stPace.textContent = pace.toFixed(1)+" km/h";
 
     var deviationKm = distanceToRouteKm(track.current);
@@ -2958,7 +2968,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       if(!el.returnPanel.hidden){
         el.rtDist.textContent = distToStart.toFixed(2)+" km";
         el.rtEta.textContent = fmtClockDate(etaStartClock);
-        el.rtBattery.textContent = Math.round(track.battery)+"%";
+        el.rtBattery.textContent = fmtBattery(track.battery);
       }
       if(distToStart < 0.05 && !track.finished){ finishReturn(now); }
     }
@@ -2989,7 +2999,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
     track.mode = "sim";
     track.startedAt = Date.now();
     el.trackOverlayPanel.style.display = "";
+    el.trackBadge.classList.add("sim-mode");
     el.trackBadge.innerHTML = '<span class="dot"></span>Simulating';
+    if(el.simBanner) el.simBanner.hidden = false;
     onPositionUpdate({ lat:pts.start.lat, lng:pts.start.lng });
     track.simTimer = setInterval(simTick, SIM_TICK_MS);
   }
@@ -3013,6 +3025,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
     track.mode = "gps";
     track.startedAt = Date.now();
     el.trackOverlayPanel.style.display = "";
+    el.trackBadge.classList.remove("sim-mode");
+    el.trackBadge.innerHTML = '<span class="dot"></span>Tracking';
+    if(el.simBanner) el.simBanner.hidden = true;
     onPositionUpdate({ lat:pos.coords.latitude, lng:pos.coords.longitude });
     track.watchId = navigator.geolocation.watchPosition(function(p){
       onPositionUpdate({ lat:p.coords.latitude, lng:p.coords.longitude });
@@ -3087,7 +3102,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     el.emgSentPanel.hidden = true;
     var c = track.current || pts.start;
     el.emgCoords.textContent = c.lat.toFixed(4)+", "+c.lng.toFixed(4);
-    el.emgBattery.textContent = Math.round(track.battery)+"%";
+    el.emgBattery.textContent = fmtBattery(track.battery);
     el.emgLastUpdate.textContent = "just now";
     drawEmergencyLayer(c);
     showAppScreen("app-emergency");
@@ -3138,8 +3153,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
     el.offlineStatus.hidden = true;
     el.emgFormPanel.hidden = false;
     el.emgSentPanel.hidden = true;
-    el.trackBadge.classList.remove("offline");
+    el.trackBadge.classList.remove("offline","sim-mode");
     el.trackBadge.innerHTML = '<span class="dot"></span>Tracking';
+    if(el.simBanner) el.simBanner.hidden = true;
     if(el.locSearchInput) el.locSearchInput.value = "";
     if(el.locSearchResults) el.locSearchResults.classList.remove("show");
     if(appMap){ clearTrail(appMap); }
