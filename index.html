@@ -1,4 +1,7 @@
-<!doctype html><html><head><meta charset="utf-8"><title>PeakGuard</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Noto+Sans:wght@400;600;700&family=PT+Mono:wght@400;700&display=swap"></head><body><style>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>PeakGuard</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Noto+Sans:wght@400;600;700&family=PT+Mono:wght@400;700&display=swap"><meta name="theme-color" content="#002917">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png"></head><body><style>
   :root{
     color-scheme: light;
     --paper: #f6f4ee;
@@ -3188,4 +3191,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
 })();
 </script>
-</body></html>
+<script>
+if("serviceWorker" in navigator){
+  window.addEventListener("load", function(){
+    navigator.serviceWorker.register("sw.js").catch(function(){});
+  });
+}
+</script></body></html>
