@@ -1223,6 +1223,19 @@ svg.leaflet-image-layer.leaflet-interactive path {
 .profile-chip .pc-main{ font-size:13px; color:var(--ink); font-weight:700; }
 .profile-chip .pc-sub{ font-family:var(--font-mono); font-size:10.5px; color:var(--stone); margin-top:2px; text-transform:uppercase; letter-spacing:0.04em; }
 .profile-chip .pc-edit{ font-family:var(--font-mono); font-size:11px; color:var(--stone); text-decoration:underline; background:none; border:none; cursor:pointer; flex:none; }
+.profile-chip .pc-actions{ display:flex; align-items:center; gap:14px; flex:none; }
+.profile-chip .pc-delete{ font-family:var(--font-mono); font-size:11px; color:var(--alert); text-decoration:underline; background:none; border:none; cursor:pointer; flex:none; }
+.pc-delete-confirm{
+  display:flex; flex-direction:column; gap:10px; margin-top:10px; padding:12px 14px;
+  border:1px solid var(--alert); border-radius:8px; background:var(--alert-tint);
+}
+.pc-delete-confirm span{ font-size:12.5px; color:var(--ink); line-height:1.4; }
+.pc-confirm-actions{ display:flex; align-items:center; gap:16px; }
+.pc-confirm-yes{
+  font-family:var(--font-mono); font-size:11px; letter-spacing:0.03em; color:#fff; background:var(--alert);
+  border:none; border-radius:4px; padding:7px 12px; cursor:pointer;
+}
+.pc-confirm-no{ font-family:var(--font-mono); font-size:11px; color:var(--stone); text-decoration:underline; background:none; border:none; cursor:pointer; }
 
 /* ---------- location search ---------- */
 .search-row{ margin-top:14px; position:relative; }
@@ -1401,7 +1414,17 @@ svg.leaflet-image-layer.leaflet-interactive path {
                 <div class="pc-main" id="pcMain">—</div>
                 <div class="pc-sub" id="pcSub">—</div>
               </div>
-              <button class="pc-edit" id="btnEditProfile" type="button">Edit</button>
+              <div class="pc-actions">
+                <button class="pc-edit" id="btnEditProfile" type="button">Edit</button>
+                <button class="pc-delete" id="btnDeleteProfile" type="button">Delete my data</button>
+              </div>
+            </div>
+            <div class="pc-delete-confirm" id="pcDeleteConfirm" hidden>
+              <span>This erases your profile from this device and starts over. Are you sure?</span>
+              <div class="pc-confirm-actions">
+                <button class="pc-confirm-yes" id="btnConfirmDelete" type="button">Yes, delete &amp; restart</button>
+                <button class="pc-confirm-no" id="btnCancelDelete" type="button">Cancel</button>
+              </div>
             </div>
 
             <p class="app-p" id="drawHint">Tap the map to place your <b>Start</b> point.</p>
@@ -2053,7 +2076,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     "appOverlay","appClose","appStepLabel","openDemoTop","openDemoHero","openDemoFinal",
     "app-register","app-plan","app-analysis","app-track","app-emergency",
     "regName","regAge","regEmName","regEmPhone","regError","btnRegSubmit",
-    "pcMain","pcSub","btnEditProfile",
+    "pcMain","pcSub","btnEditProfile","btnDeleteProfile","pcDeleteConfirm","btnConfirmDelete","btnCancelDelete",
     "locSearchInput","locSearchSpinner","locSearchResults","searchTargetNote",
     "drawHint","btnUndoPoint","btnResetRoute","btnUseMyLocation",
     "rpStartVal","rpDecisionVal","rpFinishVal",
@@ -2117,6 +2140,27 @@ svg.leaflet-image-layer.leaflet-interactive path {
   });
   el.btnEditProfile.addEventListener("click", function(){
     fillRegForm(profile);
+    showAppScreen("app-register");
+  });
+  if(el.btnDeleteProfile) el.btnDeleteProfile.addEventListener("click", function(){
+    el.pcDeleteConfirm.hidden = false;
+  });
+  if(el.btnCancelDelete) el.btnCancelDelete.addEventListener("click", function(){
+    el.pcDeleteConfirm.hidden = true;
+  });
+  if(el.btnConfirmDelete) el.btnConfirmDelete.addEventListener("click", function(){
+    try { localStorage.removeItem(PROFILE_KEY); } catch(e){}
+    profile = null;
+    el.pcDeleteConfirm.hidden = true;
+    stopTracking();
+    pts = { start:null, decision:null, finish:null };
+    plan = null;
+    if(el.locSearchInput) el.locSearchInput.value = "";
+    if(el.locSearchResults) el.locSearchResults.classList.remove("show");
+    if(appMap){ clearTrail(appMap); }
+    updateRoutePointsUI();
+    drawPlanLayers();
+    fillRegForm(null);
     showAppScreen("app-register");
   });
 
