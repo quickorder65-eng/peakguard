@@ -3189,6 +3189,27 @@ svg.leaflet-image-layer.leaflet-interactive path {
   el.appOverlay.addEventListener("click", function(e){ if(e.target===el.appOverlay) closeApp(); });
   document.addEventListener("keydown", function(e){ if(e.key==="Escape" && !el.appOverlay.hidden) closeApp(); });
 
+  /* On a phone/PWA, backgrounding the app (home button, app switcher) does not
+     reload the page — reopening it just resumes the exact same in-memory screen.
+     If that screen was a paused Decision Point or Emergency Mode with nothing
+     actually live (no GPS/sim timer running — e.g. the demo was left mid-flow),
+     resuming there looks like the app "randomly" opened to the SOS screen.
+     Snap back to a safe starting screen in that case; leave a genuinely live
+     hike (GPS watch or sim timer still running) exactly as it was. */
+  function isTrackingLive(){ return !!(track && (track.simTimer || track.uiTimer || track.watchId!=null)); }
+  function recoverFromStaleScreen(){
+    if(!el.appOverlay || el.appOverlay.hidden) return;
+    if(isTrackingLive()) return;
+    var stuckOnAlert = currentScreen==="app-track" && el.alertPanel && !el.alertPanel.hidden;
+    var stuckOnReturn = currentScreen==="app-track" && el.returnPanel && !el.returnPanel.hidden;
+    var stuckOnEmergency = currentScreen==="app-emergency";
+    if(stuckOnAlert || stuckOnReturn || stuckOnEmergency){ resetAll(); }
+  }
+  document.addEventListener("visibilitychange", function(){
+    if(document.visibilityState==="visible") recoverFromStaleScreen();
+  });
+  window.addEventListener("pageshow", function(e){ if(e.persisted) recoverFromStaleScreen(); });
+
 })();
 </script>
 <script>
