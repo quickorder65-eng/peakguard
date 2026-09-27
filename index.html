@@ -1229,6 +1229,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   display:flex; flex-direction:column; gap:10px; margin-top:10px; padding:12px 14px;
   border:1px solid var(--alert); border-radius:8px; background:var(--alert-tint);
 }
+.pc-delete-confirm[hidden]{ display:none !important; }
 .pc-delete-confirm span{ font-size:12.5px; color:var(--ink); line-height:1.4; }
 .pc-confirm-actions{ display:flex; align-items:center; gap:16px; }
 .pc-confirm-yes{
@@ -1277,6 +1278,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
 /* ---------- weather analysis ---------- */
 .weather-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+.weather-grid[hidden]{ display:none !important; }
 .weather-cell{ padding:9px 11px; border:1px solid var(--line); border-radius:8px; background:var(--panel); }
 .weather-cell .wk{ font-family:var(--font-mono); font-size:9.5px; letter-spacing:0.05em; text-transform:uppercase; color:var(--stone); }
 .weather-cell .wv{ font-family:var(--font-mono); font-size:14px; color:var(--ink); font-weight:700; margin-top:3px; }
@@ -1286,7 +1288,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
 /* ---------- terrain analysis ---------- */
 .terrain-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+.terrain-grid[hidden]{ display:none !important; }
 .elev-chart-wrap{ margin-top:14px; }
+.elev-chart-wrap[hidden]{ display:none !important; }
 .elev-chart-wrap svg{ display:block; width:100%; height:auto; }
 .elev-chart-label{ font-family:var(--font-mono); font-size:9.5px; color:var(--stone); text-transform:uppercase; letter-spacing:0.04em; margin-top:4px; display:flex; justify-content:space-between; }
 
